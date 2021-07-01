@@ -1,0 +1,123 @@
+﻿@page
+@model Compare.Areas.Identity.Pages.Account.Manage.Subscription.IndexModel
+@using Compare.Utilits;
+@using Compare
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["Subscriptions"];
+}
+
+<h4>@ViewData["Title"]</h4>
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <div class="card border-light shadow-sm components-section">
+            <div class="card-body">
+                <div id="gridContainer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            let url = `@API.GetOrganizationSubscriptionsById`;
+
+            $("#gridContainer").dxDataGrid({
+                dataSource: new DevExpress.data.DataSource({
+                    store: new DevExpress.data.AspNet.createStore({
+                        key: "id",
+                        loadUrl: url,
+                        insertUrl: '',
+                        updateUrl: '',
+                        deleteUrl: '',
+                        onBeforeSend: function (method, ajaxOptions) {
+                            ajaxOptions.xhrFields = { withCredentials: true };
+                        }
+                    }),
+                    paginate: true,
+                    pageSize: 100
+                }),
+                onInitNewRow: function(e) {
+                    var url = `@Url.Action("Create", "OrganizationSubscription", new { Area = "Administrator" })`;
+                    window.location = url;
+                },
+                selection: {
+                    mode: "multiple"
+                },
+                "export": {
+                    enabled: true,
+                    fileName: "OrganizationSubscription",
+                    allowExportSelectedData: true
+                },
+                filterPanel: {
+                    visible: false
+                },
+                filterRow: { visible: false },
+                remoteOperations: true,
+                onRowUpdating: function (e) {
+                    e.newData = Object.assign(e.oldData, e.newData)
+                },
+                scrolling: {
+                    mode: "virtual",
+                    rowRenderingMode: "virtual"
+                },
+                paging: {
+                    pageSize: 100
+                },
+                editing: {
+                    useIcons: true,
+                    allowUpdating: false,
+                    allowDeleting: false,
+                    allowAdding: false
+                },
+                headerFilter: {
+                    visible: true
+                },
+                wordWrapEnabled: true,
+                showColumnLines: true,
+                showRowLines: true,
+                rowAlternationEnabled: true,
+                showBorders: true,
+                searchPanel: {
+                    visible: true
+                },
+                stateStoring: {
+                    enabled: true,
+                    type: "localStorage",
+                    storageKey: "organizationSubscriptionUser"
+                },
+                columns: [
+                    {
+                        caption: '@SharedLocalizer["Organization name"]',
+                        dataField: "organizationName",
+                        allowHeaderFiltering: false,
+                    },
+                    {
+                        caption: '@SharedLocalizer["Category name"]',
+                        dataField: "categoryName",
+                        allowHeaderFiltering: false,
+                    },
+                    {
+                        caption: '@SharedLocalizer["Payment date"]',
+                        dataField: "paymentDate",
+                        dataType: "date",
+                        allowHeaderFiltering: false,
+                    },
+                    {
+                        caption: '@SharedLocalizer["Expire At"]',
+                        dataField: "expireAt",
+                        dataType: "date",
+                        allowHeaderFiltering: false,
+                    }
+                ]
+            });
+
+        });
+    </script>
+}

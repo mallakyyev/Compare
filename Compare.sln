@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compare", "Compare\Compare.csproj", "{6C956949-E424-4AD2-B391-3208B7F21493}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compare.DAL", "Compare.DAL\Compare.DAL.csproj", "{0865223D-8933-49C2-9517-2F2C62888001}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compare.BLL", "Compare.BLL\Compare.BLL.csproj", "{07EF7F14-2B32-4AC1-ADFB-455D4E959754}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6C956949-E424-4AD2-B391-3208B7F21493}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C956949-E424-4AD2-B391-3208B7F21493}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C956949-E424-4AD2-B391-3208B7F21493}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C956949-E424-4AD2-B391-3208B7F21493}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0865223D-8933-49C2-9517-2F2C62888001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0865223D-8933-49C2-9517-2F2C62888001}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0865223D-8933-49C2-9517-2F2C62888001}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0865223D-8933-49C2-9517-2F2C62888001}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07EF7F14-2B32-4AC1-ADFB-455D4E959754}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07EF7F14-2B32-4AC1-ADFB-455D4E959754}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07EF7F14-2B32-4AC1-ADFB-455D4E959754}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07EF7F14-2B32-4AC1-ADFB-455D4E959754}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {441B304A-8FA0-4A7D-B7C9-14B63DB05F64}
+	EndGlobalSection
+EndGlobal

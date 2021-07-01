@@ -1,0 +1,162 @@
+﻿@model Compare.BLL.DTOs.Bookmarks.BookmarkPageDto
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["Bookmarkets"];
+    var stores = Model.OrganizationProductList.OrderBy(o => o.Id)
+        .GroupBy(g => g.OrganizationName).Select(s => s.FirstOrDefault());
+}
+
+<!-- Content -->
+<div id="content">
+    @if (Model.BookmarkLists.Count() > 0)
+    {
+        <section class="shopping-cart padding-bottom-60">
+            <div class="container">
+                @if (ViewBag.AlertMessage == "success")
+                {
+                    <div class="alert alert-success alert-dismissible show">
+                        <button type="button" class="close" data-dismiss="alert">×</button>
+                        <strong>@SharedLocalizer["Success"]!</strong> @SharedLocalizer["Successfully deleted"]
+                    </div>
+                }
+                else if (ViewBag.AlertMessage == "danger")
+                {
+                    <div class="alert alert-danger alert-dismissible show">
+                        <button type="button" class="close" data-dismiss="alert">×</button>
+                        <strong>@SharedLocalizer["Error"]!</strong> @SharedLocalizer["Failed to delete"]
+                    </div>
+                }
+
+                <h1 class="product-detail-title">@SharedLocalizer["Bookmarks"]</h1>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>@SharedLocalizer["Product"]</th>
+                                @foreach (var store in stores)
+                                {
+                                    <th class="text-center">@store.OrganizationName</th>
+                                }
+                                @*<th class="text-center">@SharedLocalizer["Store"]</th>
+                                    <th class="text-center">@SharedLocalizer["Price"]</th>*@
+                                <th>&nbsp; </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var bookmarket in Model.BookmarkLists)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <a asp-area="" asp-controller="Product" asp-action="Detail" asp-route-productId="@bookmarket.ProductId">
+                                                    <img class="img-responsive" src="~/images/products/L/@bookmarket.ProductImage" alt="">
+                                                </a>
+                                            </div>
+                                            <div class="media-body">
+                                                <p>
+                                                    <a asp-area="" asp-controller="Product" asp-action="Detail" asp-route-productId="@bookmarket.ProductId">
+                                                        <span class="product-detail-store-title">
+                                                            @bookmarket.ProductName
+                                                        </span>
+                                                    </a>
+                                                </p>
+                                                @if (@bookmarket.OrganizationProductLink != null)
+                                                {
+                                                    <p>
+                                                        <a href="@bookmarket.OrganizationProductLink" target="_blank" class="product-store-link">@SharedLocalizer["Go to the seller's website"]</a>
+                                                    </p>
+                                                }
+                                            </div>
+                                        </div>
+                                    </td>
+                                    @foreach (var store in stores)
+                                    {
+                                        var organizationProductListDTO = Model.OrganizationProductList
+                                            .FirstOrDefault(s => s.ProductId == bookmarket.ProductId && s.OrganizationId == store.OrganizationId);
+                                        if (organizationProductListDTO != null)
+                                        {
+                                            <td class="text-center padding-top-60">
+                                                @organizationProductListDTO.Price TMT
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td class="text-center padding-top-60">
+                                                -
+                                            </td>
+                                        }
+                                    }
+                                    <!--<td class="text-center padding-top-60">-->
+                                    @*<a asp-area="" asp-controller="Store" asp-action="Detail" asp-route-storeId="@bookmarket.OrganizationId">
+                                            <span class="product-detail-store-title">
+                                                @bookmarket.OrganizationName
+                                            </span>
+                                        </a>*@
+                                    <!--</td>
+                                    <td class="text-center padding-top-60">@bookmarket.Price TMT</td>-->
+                                    <td class="text-center padding-top-60">
+                                        <form id="form-remove-@bookmarket.Id" asp-area="" asp-controller="Bookmark" asp-action="RemoveBookmark" method="post">
+                                            <input type="hidden" name="id" value="@bookmarket.Id" />
+                                            <a class="remove" onClick="document.getElementById('form-remove-@bookmarket.Id').submit();" style="cursor: pointer;">
+                                                <i class="fa fa-close"></i>
+                                            </a>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        <tr>
+                            <td></td>
+                            @foreach (var store in stores)
+                            {
+                                var organizationProductListDTO = Model.OrganizationProductList
+                                    .Where(s => s.OrganizationId == store.OrganizationId);
+                                if (organizationProductListDTO != null)
+                                {
+                                    <td class="text-center padding-top-60 total-bold-size-20">
+                                        @organizationProductListDTO.Sum(s => s.Price) TMT
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td class="text-center padding-top-60">
+                                        -
+                                    </td>
+                                }
+                            }
+                            <td class="text-center padding-top-60"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Promotion -->
+                    <div class="promo">
+                        <div class="coupen">
+                            <form id="form-remove-all" asp-area="" asp-controller="Bookmark" asp-action="RemoveAllBookmark" method="post">
+                                <a class="remove" onClick="document.getElementById('form-remove-all').submit();" style="cursor: pointer;">
+                                    <i class="fa fa-close"></i> Удалить список
+                                </a>
+                            </form>
+                        </div>
+
+                        <!-- Grand total -->
+                        <div class="g-totel">
+                            @*<h5>@SharedLocalizer["Grand total"]: <span>@Model.Sum(s => s.Price) TMT</span></h5>*@
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    }
+    else
+    {
+        <div class="order-success error-page">
+            <h3>@SharedLocalizer["Bookmark list is empty"]</h3>
+        </div>
+    }
+</div>
+<!-- End Content --> 

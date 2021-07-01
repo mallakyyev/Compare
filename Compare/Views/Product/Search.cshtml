@@ -1,0 +1,101 @@
+﻿@model ProductViewModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@addTagHelper *, Compare
+
+@{
+    ViewData["Title"] = Model.SearchText;
+}
+
+<!-- Content -->
+<div id="content">
+
+    <!-- Products -->
+    <section class="padding-top-40 padding-bottom-60">
+        <div class="container">
+            @if (Model.ProductDTOs.Count() > 0)
+            {
+                <div class="row">
+                    <!-- Products -->
+                    <div class="col-md-12">
+
+                        <!-- Short List -->
+                        <div class="short-lst">
+                            <h2>@Model.SearchText</h2>
+                        </div>
+
+                        <!-- Items -->
+                        <div class="col-list">
+                            <!-- Product -->
+                            @foreach (var product in Model.ProductDTOs.OrderBy(o => o.DisplayOrder))
+                            {
+                                <div class="product">
+                                    <article>
+                                        <!-- Product img -->
+                                        <div class="media-left">
+                                            <div class="item-img">
+                                                <img class="img-responsive" src="~/images/products/L/@product.Image" alt="">
+                                            </div>
+                                        </div>
+                                        <!-- Content -->
+                                        <div class="media-body">
+                                            <div class="row">
+                                                <!-- Content Left -->
+                                                <div class="col-sm-7">
+                                                    <div class="product-title">
+                                                        <a asp-area="" asp-controller="Product" asp-action="Detail" asp-route-productId="@product.Id">@product.ProductName</a>
+                                                    </div>
+
+                                                    <div class="product-shortdescription">
+                                                        @product.ShortDescription
+                                                    </div>
+                                                </div>
+                                                <!-- Content Right -->
+                                                <div class="col-sm-5 text-center">
+                                                    <div class="position-center-center">
+                                                        @if (product.MinPrice > 0)
+                                                        {
+                                                            <div class="price">от @product.MinPrice TMT</div>
+                                                            <a asp-area="" asp-controller="Product" asp-action="Detail" asp-route-productId="@product.Id" class="btn-round">@product.CountOffers @((product.CountOffers > 1) ? SharedLocalizer["offers"] : SharedLocalizer["offer"]) </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="product-notavailable">
+                                                                @SharedLocalizer["Not available"]
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </article>
+                                </div>
+                            }
+
+                            <!-- pagination -->
+                            <page-link page-model="Model.PageViewModel" page-action="Search" page-url-text="@Model.SearchText"></page-link>
+
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <section>
+                    <div class="container">
+                        <div class="order-success error-page">
+                            <h3>@SharedLocalizer["No results were found for your search"]</h3>
+                            <p>
+                                @SharedLocalizer["Try to shorten the request or ask it differently. Make sure the product name is spelled correctly."]
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            }
+
+        </div>
+    </section>
+
+</div>
+<!-- End Content --> 

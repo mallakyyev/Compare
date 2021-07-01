@@ -1,0 +1,218 @@
+﻿@model Compare.BLL.DTOs.CatalogPanel.EditCategoryPanelDTO
+@using Compare.BLL.DTOs.Configuration;
+@using Compare
+@using Compare.Utilits
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["Editing panel"];
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+
+    int lngIndex = 0;
+}
+
+<div class="py-4">
+    <div class="d-flex justify-content-between w-100 flex-wrap">
+        <div class="mb-3 mb-lg-0">
+            <h1 class="h4">@SharedLocalizer["Editing panel"]</h1>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card border-light shadow-sm components-section">
+            <div class="card-body">
+                <div id="gridContainer">
+                    <div class="row md-4">
+                        <form asp-area="Administrator" asp-controller="CategoryPanel" asp-action="Edit" method="post" id="form" enctype="multipart/form-data">
+                            <div class="col-lg-12 col-sm-12">
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                                <input type="hidden" asp-for="Id" />
+
+                                @foreach (LanguageDTO languageDTO in ViewBag.Languages)
+                                {
+                                    var cpT = Model.CategoryPanelTranslates.FirstOrDefault(p => p.LanguageCulture == languageDTO.Culture);
+                                    <input type="hidden" class="form-control" name="CategoryPanelTranslates[@lngIndex].LanguageCulture" value="@languageDTO.Culture" />
+
+                                    <h2>@languageDTO.Name</h2>
+                                    <hr />
+                                    @if (cpT != null)
+                                    {
+                                        <input type="hidden" name="CategoryPanelTranslates[@lngIndex].Id" value="@cpT.Id" />
+                                        <div class="mb-3">
+                                            <label>@SharedLocalizer["Name"] *</label>
+                                            <div id="name-@lngIndex"></div>
+                                        </div>
+                                        <script>
+                                            $(function () {
+                                                $("#name-@lngIndex").dxTextBox({
+                                                    name: "CategoryPanelTranslates[@lngIndex].Name",
+                                                    value: @Json.Serialize(cpT.Name)
+                                                    }).dxValidator({
+                                                        validationRules: [{
+                                                            type: "required",
+                                                            message: '@SharedLocalizer["Enter name"]'
+                                                        }]
+                                                    }).dxTextBox("instance");
+                                            });
+                                        </script>
+                                        <br />
+                                    }
+                                    else
+                                    {
+                                        <div class="mb-3">
+                                            <label>@SharedLocalizer["Name"] *</label>
+                                            <div id="name-@lngIndex"></div>
+                                        </div>
+                                        <script>
+                                            $(function () {
+                                                $("#name-@lngIndex").dxTextBox({
+                                                    name: "CategoryPanelTranslates[@lngIndex].Name"
+                                                    }).dxValidator({
+                                                        validationRules: [{
+                                                            type: "required",
+                                                            message: '@SharedLocalizer["Enter name"]'
+                                                        }]
+                                                    }).dxTextBox("instance");
+                                            });
+                                        </script>
+                                        <br />
+                                    }
+
+
+                                    lngIndex++;
+                                }
+
+                                <h2>@SharedLocalizer["Data"]</h2>
+                                <hr />
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Category"] *</label>
+                                    <div id="categorySelection"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Products"] *</label>
+                                    <div id="productSelection"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Sorting"] *</label>
+                                    <div id="displayOrder"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <div id="isPublish"></div>
+                                </div>
+
+                                <br />
+                                <div id="summary"></div>
+                                <br />
+                                <div id="button"></div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        let getCategoryParents = `@API.GetAllPublishCategoryParent`;
+        let getProducts = `@API.GetProductCategoryParentList`;
+
+        $(function () {
+            let categorySelectBox = $("#categorySelection").dxSelectBox({
+                dataSource: new DevExpress.data.DataSource({
+                    store: new DevExpress.data.AspNet.createStore({
+                        key: "id",
+                        loadUrl: getCategoryParents,
+                        loadMode: "raw",
+                        onBeforeSend: function (method, ajaxOptions) {
+                            ajaxOptions.xhrFields = { withCredentials: true };
+                        }
+                    }),
+                    paginate: true,
+                    pageSize: 30
+                }),
+                searchEnabled: true,
+                displayExpr: "name",
+                valueExpr: "id",
+                name: "CategoryId",
+                value: @Json.Serialize(Model.CategoryId),
+                onValueChanged: function (data) {
+                    productTagBox.option("value", "");
+                    productTagBox.option("disabled", false);
+                    productTagBox.option("dataSource", new DevExpress.data.DataSource({
+                        store: new DevExpress.data.AspNet.createStore({
+                            key: "id",
+                            loadUrl: getProducts + "?parentId=" + categorySelectBox.option("value"),
+                            loadMode: "raw",
+                            onBeforeSend: function (method, ajaxOptions) {
+                                ajaxOptions.xhrFields = { withCredentials: true };
+                            }
+                        }),
+                        paginate: true,
+                        pageSize: 30
+                    }));
+                }
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Select category"]'
+                }]
+            }).dxSelectBox("instance");
+
+            let productTagBox = $("#productSelection").dxTagBox({
+                dataSource: new DevExpress.data.AspNet.createStore({
+                    key: "id",
+                    loadUrl: getProducts + "?parentId=" + @Model.CategoryId,
+                    onBeforeSend: function (method, ajaxOptions) {
+                        ajaxOptions.xhrFields = { withCredentials: true };
+                    }
+                }),
+                searchEnabled: true,
+                displayExpr: "productName",
+                valueExpr: "id",
+                name: "ProductsId",
+                value: @Html.Raw(Json.Serialize(Model.ProductsId)),
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Select products"]'
+                }]
+            }).dxTagBox("instance");
+
+            $("#displayOrder").dxNumberBox({
+                value: 0,
+                min: 0,
+                showSpinButtons: true,
+                name: 'DisplayOrder',
+                value: @Json.Serialize(Model.DisplayOrder)
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Enter sort number"]'
+                }]
+            });
+
+            let published = '@Model.IsPublish';
+            $("#isPublish").dxCheckBox({
+                value: true,
+                text: '@SharedLocalizer["Active"]',
+                name: 'IsPublish',
+                value: (published.toLowerCase() == 'true')
+            });
+
+            $("#button").dxButton({
+                text: '@SharedLocalizer["Save"]',
+                type: "success",
+                useSubmitBehavior: true,
+            });
+            $("#summary").dxValidationSummary({});
+        });
+    </script>
+
+}

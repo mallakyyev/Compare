@@ -1,0 +1,118 @@
+﻿@model Compare.BLL.DTOs.ProductDetailAttribute.CreateProductDetailAttributeDTO
+@using Compare.BLL.DTOs.Configuration;
+@using Compare
+@using Compare.Utilits
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["Creating product attribute"];
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+
+    int lngIndex = 0;
+}
+
+<div class="py-4">
+    <div class="d-flex justify-content-between w-100 flex-wrap">
+        <div class="mb-3 mb-lg-0">
+            <h1 class="h4">@SharedLocalizer["Creating product attribute"]</h1>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card border-light shadow-sm components-section">
+            <div class="card-body">
+                <div id="gridContainer">
+                    <div class="row md-4">
+                        <form asp-area="Administrator" asp-controller="ProductDetailAttribute" asp-action="Create" method="post" id="form" enctype="multipart/form-data">
+                            <div class="col-lg-12 col-sm-12">
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                                <input type="hidden" name="ProductId" value="@ViewBag.ProductId"/>
+
+                                <h2>@SharedLocalizer["Data"]</h2>
+                                <hr />
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Templates"]</label>
+                                    <div id="templatesSelection"></div>
+                                </div>
+                                <div class="current-attribute"></div>
+                                
+
+                                <br />
+                                <div id="summary"></div>
+                                <br />
+                                <div id="button"></div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        let getTemplates = `@API.GetAllProductAttributeTemplates`;
+
+        $(function () {
+            $("#templatesSelection").dxSelectBox({
+                dataSource: new DevExpress.data.AspNet.createStore({
+                    key: "id",
+                    loadUrl: getTemplates,
+                    onBeforeSend: function (method, ajaxOptions) {
+                        ajaxOptions.xhrFields = { withCredentials: true };
+                    }
+                }),
+                searchEnabled: true,
+                displayExpr: "name",
+                valueExpr: "id",
+                onValueChanged: function (data) {
+                    if (data.value !== null) {
+                        $(".current-attribute").html("");
+                        var selectedItem = data.component.option('selectedItem');
+                        axios.get(`../../api/ProductAttributeTemplateAPI/GetProductOptionsCultureListId/` + selectedItem.id)
+                            .then(res => {
+                                let index = 0;
+                                for (let i = 0; i < res.data.length; i++) {
+                                    console.log(res.data[i].name);
+                                    var result = $("<div class='mb-3'><label>" + res.data[i].name + " (" +
+                                        res.data[i].languageCulture + ")</label>" + 
+                                        "<input type='text' class='form-control' name='ProductDetailAttributeTranslates[" + index + "].Value' required /></div>" +
+                                        "<input type='hidden' name='ProductDetailAttributeTranslates[" + index + "].Name' Value='" + res.data[i].name + "' />" +
+                                        "<input type='hidden' name='ProductDetailAttributeTranslates[" + index + "].LanguageCulture' Value='" + res.data[i].languageCulture + "' />");
+                                    
+                                    $(".current-attribute").append(result);
+                                    index++;
+                                }
+                            }).catch(function (error) {
+                                console.log(error);
+                            });
+                    } else {
+                        $result.text("Not selected");
+                    }
+
+
+
+                }
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Select template"]'
+                }]
+            }).dxSelectBox("instance");
+
+            $("#button").dxButton({
+                text: '@SharedLocalizer["Create"]',
+                type: "success",
+                useSubmitBehavior: true,
+            });
+            $("#summary").dxValidationSummary({});
+        });
+    </script>
+
+}

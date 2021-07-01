@@ -1,0 +1,313 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Compare</title>
+    @*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />*@
+
+    <!-- Fontawesome -->
+    <link type="text/css" href="~/siteadmin/vendor/fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+
+    <!-- Notyf -->
+    <link type="text/css" href="~/siteadmin/vendor/notyf/notyf.min.css" rel="stylesheet">
+
+    <!-- Volt CSS -->
+    <link type="text/css" href="~/siteadmin/css/volt.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="~/lib/devextreme/css/dx.common.css" />
+    <link rel="stylesheet" href="~/lib/devextreme/css/dx.light.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/devextreme/js/dx-quill.min.js"></script>
+</head>
+<body class="dx-viewport">
+    <nav class="navbar navbar-dark navbar-theme-primary px-4 col-12 d-md-none">
+        <a class="navbar-brand mr-lg-5" asp-area="" asp-controller="Home" asp-action="Index">
+            <img class="navbar-brand-dark" src="~/siteadmin/assets/img/brand/light.svg" alt="Volt logo" />
+            <img class="navbar-brand-light" src="~/siteadmin/assets/img/brand/dark.svg" alt="Volt logo" />
+        </a>
+        <div class="d-flex align-items-center">
+            <button class="navbar-toggler d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="container-fluid bg-soft">
+        <div class="row">
+            <div class="col-12">
+                <nav id="sidebarMenu" class="sidebar d-md-block bg-primary text-white collapse" data-simplebar>
+                    <div class="sidebar-inner px-4 pt-3">
+                        @*<div class="user-card d-flex d-md-none align-items-center justify-content-between justify-content-md-center pb-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="user-avatar lg-avatar mr-4">
+                                        <img src="../../assets/img/team/profile-picture-3.jpg" class="card-img-top rounded-circle border-white" alt="Bonnie Green">
+                                    </div>
+                                    <div class="d-block">
+                                        <h2 class="h6">Hi, Jane</h2>
+                                        <a href="../../pages/examples/sign-in.html" class="btn btn-secondary text-dark btn-xs"><span class="mr-2"><span class="fas fa-sign-out-alt"></span></span>Sign Out</a>
+                                    </div>
+                                </div>
+                                <div class="collapse-close d-md-none">
+                                    <a href="#sidebarMenu" class="fas fa-times" data-toggle="collapse"
+                                       data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="true"
+                                       aria-label="Toggle navigation"></a>
+                                </div>
+                            </div>*@
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a asp-area="" asp-controller="Home" asp-action="Index" class="nav-link">
+                                    <span class="sidebar-icon"><span class="fas fa-home"></span></span>
+                                    <span>@SharedLocalizer["Home"]</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-area="Administrator" asp-controller="Home" asp-action="Index" class="nav-link">
+                                    <span class="sidebar-icon"><span class="fas fa-chart-pie"></span></span>
+                                    <span>@SharedLocalizer["Dashboard"]</span>
+                                </a>
+                            </li>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <span class="nav-link  collapsed  d-flex justify-content-between align-items-center" data-toggle="collapse" data-target="#home-pages">
+                                        <span>
+                                            <span class="sidebar-icon"><span class="far fa-file-alt"></span></span>
+                                            @SharedLocalizer["Home"]
+                                        </span>
+                                        <span class="link-arrow"><span class="fas fa-chevron-right"></span></span>
+                                    </span>
+                                    <div class="multi-level collapse " role="list" id="home-pages" aria-expanded="false">
+                                        <ul class="flex-column nav">
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="Administrator" asp-controller="Banner" asp-action="Index"><span>@SharedLocalizer["Banners"]</span></a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="Administrator" asp-controller="Panel" asp-action="Index"><span>@SharedLocalizer["Panels"]</span></a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="Administrator" asp-controller="CategoryPanel" asp-action="Index"><span>@SharedLocalizer["Category panels"]</span></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link  collapsed  d-flex justify-content-between align-items-center" data-toggle="collapse" data-target="#catalog-pages">
+                                        <span>
+                                            <span class="sidebar-icon"><span class="far fa-file-alt"></span></span>
+                                            @SharedLocalizer["Catalog"]
+                                        </span>
+                                        <span class="link-arrow"><span class="fas fa-chevron-right"></span></span>
+                                    </span>
+                                    <div class="multi-level collapse " role="list" id="catalog-pages" aria-expanded="false">
+                                        <ul class="flex-column nav">
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="Administrator" asp-controller="Manufacture" asp-action="Index"><span>@SharedLocalizer["Manufactures"]</span></a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="Administrator" asp-controller="Category" asp-action="Index"><span>@SharedLocalizer["Categories"]</span></a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="Administrator" asp-controller="Product" asp-action="Index"><span>@SharedLocalizer["Products"]</span></a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="Administrator" asp-controller="ProductOption" asp-action="Index"><span>@SharedLocalizer["Product options"]</span></a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="Administrator" asp-controller="ProductAttributeTemplate" asp-action="Index"><span>@SharedLocalizer["Attribute templates"]</span></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link  collapsed  d-flex justify-content-between align-items-center" data-toggle="collapse" data-target="#organization-pages">
+                                        <span>
+                                            <span class="sidebar-icon"><span class="far fa-file-alt"></span></span>
+                                            @SharedLocalizer["Organization"]
+                                        </span>
+                                        <span class="link-arrow"><span class="fas fa-chevron-right"></span></span>
+                                    </span>
+                                    <div class="multi-level collapse " role="list" id="organization-pages" aria-expanded="false">
+                                        <ul class="flex-column nav">
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="Administrator" asp-controller="Organization" asp-action="Index"><span>@SharedLocalizer["Organizations"]</span></a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="Administrator" asp-controller="OrganizationSubscription" asp-action="Index"><span>@SharedLocalizer["Organization subscription"]</span></a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="Administrator" asp-controller="Organization" asp-action="IndexOrganizationProduct"><span>@SharedLocalizer["Organizations products"]</span></a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="Administrator" asp-controller="Organization" asp-action="IndexOrganizationApi"><span>@SharedLocalizer["Organizations API"]</span></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link  collapsed  d-flex justify-content-between align-items-center" data-toggle="collapse" data-target="#comments">
+                                        <span>
+                                            <span class="sidebar-icon"><span class="far fa-file-alt"></span></span>
+                                            @SharedLocalizer["Comments"]
+                                        </span>
+                                        <span class="link-arrow"><span class="fas fa-chevron-right"></span></span>
+                                    </span>
+                                    <div class="multi-level collapse " role="list" id="comments" aria-expanded="false">
+                                        <ul class="flex-column nav">
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="Administrator" asp-controller="ProductComment" asp-action="Index"><span>@SharedLocalizer["Product comments"]</span></a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="Administrator" asp-controller="StoreComment" asp-action="Index"><span>@SharedLocalizer["Store comments"]</span></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <a asp-area="Administrator" asp-controller="ApplicationUser" asp-action="Index" class="nav-link">
+                                        <span class="sidebar-icon"><span class="fas fa-file-alt"></span></span>
+                                        <span>@SharedLocalizer["Accounts"]</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a asp-area="Administrator" asp-controller="Advert" asp-action="Index" class="nav-link">
+                                        <span class="sidebar-icon"><span class="fas fa-file-alt"></span></span>
+                                        <span>@SharedLocalizer["Adverts"]</span>
+                                    </a>
+                                </li>
+                                <li role="separator" class="dropdown-divider mt-4 mb-3 border-black"></li>
+                                <li class="nav-item">
+                                    <a asp-area="Administrator" asp-controller="Information" asp-action="InformationCheck" asp-route-status="@Compare.DAL.Models.Enums.InformationStatus.About" class="nav-link d-flex align-items-center">
+                                        <span class="sidebar-icon"><span class="fas fa-book"></span></span>
+                                        <span>@SharedLocalizer["About"]</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a asp-area="Administrator" asp-controller="Information" asp-action="InformationCheck" asp-route-status="@Compare.DAL.Models.Enums.InformationStatus.Advertising" class="nav-link d-flex align-items-center">
+                                        <span class="sidebar-icon"><span class="fas fa-book"></span></span>
+                                        <span>@SharedLocalizer["Advertising"]</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a asp-area="Administrator" asp-controller="Information" asp-action="InformationCheck" asp-route-status="@Compare.DAL.Models.Enums.InformationStatus.FooterInfo" class="nav-link d-flex align-items-center">
+                                        <span class="sidebar-icon"><span class="fas fa-book"></span></span>
+                                        <span>@SharedLocalizer["Bottom information"]</span>
+                                    </a>
+                                </li>
+                            }
+                            @if (User.IsInRole("Directory management"))
+                            {
+                                <li class="nav-item">
+                                    <span class="nav-link  collapsed  d-flex justify-content-between align-items-center" data-toggle="collapse" data-target="#catalog-pages">
+                                        <span>
+                                            <span class="sidebar-icon"><span class="far fa-file-alt"></span></span>
+                                            @SharedLocalizer["Catalog"]
+                                        </span>
+                                        <span class="link-arrow"><span class="fas fa-chevron-right"></span></span>
+                                    </span>
+                                    <div class="multi-level collapse " role="list" id="catalog-pages" aria-expanded="false">
+                                        <ul class="flex-column nav">
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="Administrator" asp-controller="Manufacture" asp-action="Index"><span>@SharedLocalizer["Manufactures"]</span></a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="Administrator" asp-controller="Category" asp-action="Index"><span>@SharedLocalizer["Categories"]</span></a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="Administrator" asp-controller="Product" asp-action="Index"><span>@SharedLocalizer["Products"]</span></a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="Administrator" asp-controller="ProductOption" asp-action="Index"><span>@SharedLocalizer["Product options"]</span></a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="Administrator" asp-controller="ProductAttributeTemplate" asp-action="Index"><span>@SharedLocalizer["Attribute templates"]</span></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="nav-link  collapsed  d-flex justify-content-between align-items-center" data-toggle="collapse" data-target="#organization-pages">
+                                        <span>
+                                            <span class="sidebar-icon"><span class="far fa-file-alt"></span></span>
+                                            @SharedLocalizer["Organization"]
+                                        </span>
+                                        <span class="link-arrow"><span class="fas fa-chevron-right"></span></span>
+                                    </span>
+                                    <div class="multi-level collapse " role="list" id="organization-pages" aria-expanded="false">
+                                        <ul class="flex-column nav">
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-area="Administrator" asp-controller="Organization" asp-action="IndexOrganizationProduct"><span>@SharedLocalizer["Organizations products"]</span></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </nav>
+
+                <main class="content">
+                    @RenderBody()
+                </main>
+            </div>
+        </div>
+    </div>
+
+    @*<partial name="_LoginPartial" />*@
+    <!--</div>
+            </div>
+        </nav>
+    </header>-->
+    @*<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>*@
+    <!-- Core -->
+    <script src="~/siteadmin/vendor/popper.js/dist/umd/popper.min.js"></script>
+    <script src="~/siteadmin/vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <!-- Vendor JS -->
+    <script src="~/siteadmin/vendor/onscreen/dist/on-screen.umd.min.js"></script>
+
+    <!-- Slider -->
+    <script src="~/siteadmin/vendor/nouislider/distribute/nouislider.min.js"></script>
+
+    <!-- Jarallax -->
+    <script src="~/siteadmin/vendor/jarallax/dist/jarallax.min.js"></script>
+
+    <!-- Smooth scroll -->
+    <script src="~/siteadmin/vendor/smooth-scroll/dist/smooth-scroll.polyfills.min.js"></script>
+
+    <!-- Count up -->
+    <script src="~/siteadmin/vendor/countup.js/dist/countUp.umd.js"></script>
+
+    <!-- Notyf -->
+    <script src="~/siteadmin/vendor/notyf/notyf.min.js"></script>
+
+    <!-- Charts -->
+    <script src="~/siteadmin/vendor/chartist/dist/chartist.min.js"></script>
+    <script src="~/siteadmin/vendor/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js"></script>
+
+    <!-- Datepicker -->
+    <script src="~/siteadmin/vendor/vanillajs-datepicker/dist/js/datepicker.min.js"></script>
+
+    <!-- Simplebar -->
+    <script src="~/siteadmin/vendor/simplebar/dist/simplebar.min.js"></script>
+
+    <!-- Volt JS -->
+    <script src="~/siteadmin/assets/js/volt.js"></script>
+
+    <script src="~/lib/devextreme/js/dx.all.js"></script>
+    <script src="~/lib/devextreme/js/dx.aspnet.data.js"></script>
+    <script src="~/lib/devextreme/js/localization/dx.messages.ru.js"></script>
+    <script>
+        $(function () {
+            DevExpress.localization.locale("ru");
+        });
+    </script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/axios.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

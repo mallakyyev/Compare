@@ -1,0 +1,165 @@
+﻿@model Compare.BLL.DTOs.Organization.CreateOrganizationProductDTO
+@using Compare.BLL.DTOs.Configuration;
+@using Compare
+@using Compare.Utilits
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["Creating a price for an organization's product"];
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<div class="py-4">
+    <div class="d-flex justify-content-between w-100 flex-wrap">
+        <div class="mb-3 mb-lg-0">
+            <h1 class="h4">@SharedLocalizer["Creating subscription"]</h1>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card border-light shadow-sm components-section">
+            <div class="card-body">
+                <div id="gridContainer">
+                    <div class="row md-4">
+                        <form asp-area="Administrator" asp-controller="Organization" asp-action="CreateOrganizationProduct" method="post" id="form" enctype="multipart/form-data">
+                            <div class="col-lg-12 col-sm-12">
+                                <div asp-validation-summary="All" class="text-danger"></div>
+
+                                <h2>@SharedLocalizer["Data"]</h2>
+                                <hr />
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Organization"]</label>
+                                    <div id="organizationSelection"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Product"]</label>
+                                    <div id="productSelection"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Organization product id"]</label>
+                                    <div id="organizationProductId"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Organization product url"]</label>
+                                    <div id="organizationProductUrl"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Price"] *</label>
+                                    <div id="price"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <div id="inStock"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <div id="officialDealer"></div>
+                                </div>
+
+                                <br />
+                                <div id="summary"></div>
+                                <br />
+                                <div id="button"></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            $("#organizationSelection").dxSelectBox({
+                dataSource: new DevExpress.data.DataSource({
+                    store: new DevExpress.data.AspNet.createStore({
+                        key: "id",
+                        loadUrl: `@API.GetAllOrganizations`,
+                        loadMode: "raw",
+                        onBeforeSend: function (method, ajaxOptions) {
+                            ajaxOptions.xhrFields = { withCredentials: true };
+                        }
+                    }),
+                    paginate: true,
+                    pageSize:30
+                }),
+                displayExpr: "name",
+                valueExpr: "id",
+                name: 'OrganizationId',
+                searchEnabled: true
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Choose organization"]'
+                }]
+            });
+
+            $("#productSelection").dxSelectBox({
+                dataSource: new DevExpress.data.DataSource({
+                    store: new DevExpress.data.AspNet.createStore({
+                        key: "id",
+                        loadUrl: `@API.GetAllProducts`,
+                        loadMode: "raw",
+                        onBeforeSend: function (method, ajaxOptions) {
+                            ajaxOptions.xhrFields = { withCredentials: true };
+                        }
+                    }),
+                    paginate: true,
+                    pageSize:30
+                }),
+                displayExpr: "productName",
+                valueExpr: "id",
+                name: 'ProductId',
+                searchEnabled: true
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Choose product"]'
+                }]
+            });
+
+            $("#organizationProductId").dxNumberBox({
+                name: 'OrganizationProductId',
+                showClearButton: true
+            });
+
+            $("#organizationProductUrl").dxTextBox({
+                name: 'OrganizationProductUrl',
+                showClearButton: true
+            }).dxTextBox("instance");
+
+            $("#price").dxNumberBox({
+                format: "#,##0.00 TMT",
+                min: 0,
+                name: "Price"
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Enter price"]'
+                }]
+            });
+
+            $("#inStock").dxCheckBox({
+                text: '@SharedLocalizer["In stock"]',
+                name: 'InStock',
+                value: true
+            });
+
+            $("#officialDealer").dxCheckBox({
+                text: '@SharedLocalizer["Official dealer"]',
+                name: 'OfficialDealer'
+            });
+
+            $("#button").dxButton({
+                text: '@SharedLocalizer["Create"]',
+                type: "default",
+                useSubmitBehavior: true,
+            });
+            $("#summary").dxValidationSummary({});
+        });
+    </script>
+
+}

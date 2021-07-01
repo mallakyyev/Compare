@@ -1,0 +1,28 @@
+﻿@using Compare.DAL.Models.User
+@inject SignInManager<ApplicationUser> SignInManager
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Compare
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@{
+    var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+}
+<ul class="nav flex-column">
+    <li class="nav-item"><a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="/Account/Manage/Index">@SharedLocalizer["Profile"]</a></li>
+    @if (User.IsInRole("Organization"))
+    {
+        <li class="nav-item"><a class="nav-link @ManageNavPages.StoreIndexNavClass(ViewContext)" id="store" asp-page="/Account/Manage/Store/Index">@SharedLocalizer["Store"]</a></li>
+        <li class="nav-item"><a class="nav-link @ManageNavPages.ProductsNavClass(ViewContext)" id="products" asp-page="/Account/Manage/Products/Index">@SharedLocalizer["Products"]</a></li>
+        <li class="nav-item"><a class="nav-link @ManageNavPages.SubscriptionIndexIndexNavClass(ViewContext)" id="subscriptions" asp-page="/Account/Manage/Subscription/Index">@SharedLocalizer["Subscriptions"]</a></li>
+    }
+    <li class="nav-item"><a class="nav-link @ManageNavPages.ProductCommentsNavClass(ViewContext)" id="product-comments" asp-page="/Account/Manage/ProductComments/Index">@SharedLocalizer["Product comments"]</a></li>
+    <li class="nav-item"><a class="nav-link @ManageNavPages.StoreCommentsNavClass(ViewContext)" id="store-comments" asp-page="/Account/Manage/StoreComments/Index">@SharedLocalizer["Store comments"]</a></li>
+    <li class="nav-item"><a class="nav-link @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="/Account/Manage/Email">@SharedLocalizer["Email"]</a></li>
+    <li class="nav-item"><a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="/Account/Manage/ChangePassword">@SharedLocalizer["Password"]</a></li>
+    @*@if (hasExternalLogins)
+        {
+            <li id="external-logins" class="nav-item"><a id="external-login" class="nav-link @ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="./ExternalLogins">External logins</a></li>
+        }
+        <li class="nav-item"><a class="nav-link @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor" asp-page="./TwoFactorAuthentication">Two-factor authentication</a></li>
+        <li class="nav-item"><a class="nav-link @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData">Personal data</a></li>*@
+</ul>

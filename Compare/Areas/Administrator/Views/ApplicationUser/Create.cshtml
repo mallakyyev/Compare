@@ -1,0 +1,200 @@
+﻿@model Compare.BLL.DTOs.User.CreateApplicationUserDTO
+@using Compare.BLL.DTOs.Configuration;
+@using Compare
+@using Compare.Utilits
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["Creating user"];
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<div class="py-4">
+    <div class="d-flex justify-content-between w-100 flex-wrap">
+        <div class="mb-3 mb-lg-0">
+            <h1 class="h4">@SharedLocalizer["Creating user"]</h1>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card border-light shadow-sm components-section">
+            <div class="card-body">
+                <div id="gridContainer">
+                    <div class="row md-4">
+                        <form asp-area="Administrator" asp-controller="ApplicationUser" asp-action="Create" method="post" id="form" enctype="multipart/form-data">
+                            <div class="col-lg-12 col-sm-12">
+                                <div asp-validation-summary="All" class="text-danger"></div>
+
+                                <h2>@SharedLocalizer["Data"]</h2>
+                                <hr />
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["User name"] *</label>
+                                    <div id="userName"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Email"] *</label>
+                                    <div id="email"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Password"] *</label>
+                                    <div id="password"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Confirm password"] *</label>
+                                    <div id="confirmPassword"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["First name"] *</label>
+                                    <div id="firstName"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Last name"] *</label>
+                                    <div id="lastName"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Phone number"]</label>
+                                    <div id="phoneNumber"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Organization"]</label>
+                                    <div id="organization"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Role"]</label>
+                                    <div id="role"></div>
+                                </div>
+
+                                <br />
+                                <div id="summary"></div>
+                                <br />
+                                <div id="button"></div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        let getOrganizations = `@API.GetAllOrganizations`;
+
+        $(function () {
+            $("#userName").dxTextBox({
+                name: "UserName",
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Enter login"]'
+                }]
+            }).dxTextBox("instance");
+
+            $("#email").dxTextBox({
+                name: "Email",
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Email is required"]'
+                },
+                    {
+                        type: "email",
+                        message: '@SharedLocalizer["Email is invalid"]'
+                    }
+                ]
+            }).dxTextBox("instance");
+
+            $("#password").dxTextBox({
+                mode: "password",
+                name: "Password"
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Password is required"]'
+                }]
+            });
+
+            $("#confirmPassword").dxTextBox({
+                mode: "password",
+                name: "ConfirmPassword"
+            }).dxValidator({
+                validationRules: [{
+                    type: "compare",
+                    comparisonTarget: function () {
+                        var password = $("#password").dxTextBox("instance");
+                        if (password) {
+                            return password.option("value");
+                        }
+                    },
+                    message: '@SharedLocalizer["Password and Confirm Password do not match"]'
+                },
+                {
+                    type: "required",
+                    message: '@SharedLocalizer["Confirm Password is required"]'
+                }]
+            });
+
+            $("#firstName").dxTextBox({
+                name: "FirstName",
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Enter first name"]'
+                }]
+            }).dxTextBox("instance");
+
+            $("#lastName").dxTextBox({
+                name: "LastName",
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Enter last name"]'
+                }]
+            }).dxTextBox("instance");
+
+            $("#phoneNumber").dxTextBox({
+                name: "PhoneNumber",
+            }).dxTextBox("instance");
+
+            $("#organization").dxSelectBox({
+                dataSource: new DevExpress.data.AspNet.createStore({
+                    key: "id",
+                    loadUrl: getOrganizations,
+                    onBeforeSend: function (method, ajaxOptions) {
+                        ajaxOptions.xhrFields = { withCredentials: true };
+                    }
+                }),
+                displayExpr: "name",
+                valueExpr: "id",
+                name: 'OrganizationId',
+                searchEnabled: true
+            });
+
+            $("#role").dxSelectBox({
+                items: @Json.Serialize(ViewBag.RolesList),
+                displayExpr: "value",
+                valueExpr: "value",
+                name: "Role"
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Select role"]'
+                }]
+            }).dxSelectBox("instance");
+
+            $("#button").dxButton({
+                text: '@SharedLocalizer["Create"]',
+                type: "success",
+                useSubmitBehavior: true,
+            });
+            $("#summary").dxValidationSummary({});
+        });
+    </script>
+
+}

@@ -1,0 +1,164 @@
+﻿@model Compare.BLL.DTOs.Catalog.CreateCategoryDTO
+@using Compare.BLL.DTOs.Configuration;
+@using Compare
+@using Compare.Utilits
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["Creating category"];
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+
+    int lngIndex = 0;
+}
+
+<div class="py-4">
+    <div class="d-flex justify-content-between w-100 flex-wrap">
+        <div class="mb-3 mb-lg-0">
+            <h1 class="h4">@SharedLocalizer["Creating category"]</h1>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card border-light shadow-sm components-section">
+            <div class="card-body">
+                <div id="gridContainer">
+                    <div class="row md-4">                        
+                        <form asp-area="Administrator" asp-controller="Category" asp-action="Create" method="post" id="form" enctype="multipart/form-data">
+                            <div class="col-lg-12 col-sm-12">
+                                <div asp-validation-summary="All" class="text-danger"></div>
+
+                                @foreach (LanguageDTO languageDTO in ViewBag.Languages)
+                                {
+                                    <h2>@languageDTO.Name</h2>
+                                    <hr />
+                                    <input type="hidden" class="form-control" name="CategoryTranslates[@lngIndex].LanguageCulture" value="@languageDTO.Culture" />
+                                    <div class="mb-3">
+                                        <label>@SharedLocalizer["Name"]</label>
+                                        <div id="name-@lngIndex"></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>@SharedLocalizer["Meta title"] *</label>
+                                        <div id="meta-title-@lngIndex"></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>@SharedLocalizer["Meta description"] *</label>
+                                        <div id="meta-description-@lngIndex"></div>
+                                    </div>
+                                    <br />
+                                    <script>
+                                    $(function () {
+                                        $("#name-@lngIndex").dxTextBox({
+                                            name: "CategoryTranslates[@lngIndex].Name"
+                                        }).dxValidator({
+                                            validationRules: [{
+                                                type: "required",
+                                                message: '@SharedLocalizer["Enter name"]'
+                                            }]
+                                        }).dxTextBox("instance");
+
+                                        $("#meta-title-@lngIndex").dxTextBox({
+                                            name: "CategoryTranslates[@lngIndex].MetaTitle"
+                                        }).dxValidator({
+                                            validationRules: [{
+                                                type: "required",
+                                                message: '@SharedLocalizer["Enter meta title"]'
+                                            }]
+                                        }).dxTextBox("instance");
+
+                                        $("#meta-description-@lngIndex").dxTextBox({
+                                            name: "CategoryTranslates[@lngIndex].MetaDescription"
+                                        }).dxValidator({
+                                            validationRules: [{
+                                                type: "required",
+                                                message: '@SharedLocalizer["Enter meta description"]'
+                                            }]
+                                        }).dxTextBox("instance");
+                                    });
+                                    </script>
+                                    lngIndex++;
+                                }
+
+                                <h2>@SharedLocalizer["Data"]</h2>
+                                <hr />
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Parent"]</label>
+                                    <div id="categorySelection"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Sorting"]</label>
+                                    <div id="displayOrder"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <div id="published"></div>
+                                </div>
+
+                                <br />
+                                <div id="summary"></div>
+                                <br />
+                                <div id="button"></div>
+                            </div>  
+                        </form>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        let getCategories = `@API.GetAllCategories`;
+
+        $(function () {
+            $("#categorySelection").dxSelectBox({
+                dataSource: new DevExpress.data.DataSource({
+                    store: new DevExpress.data.AspNet.createStore({
+                        key: "id",
+                        loadUrl: getCategories,
+                        loadMode: "raw",
+                        onBeforeSend: function (method, ajaxOptions) {
+                            ajaxOptions.xhrFields = { withCredentials: true };
+                        }
+                    }),
+                    paginate: true,
+                    pageSize:30
+                }),
+                displayExpr: "name",
+                valueExpr: "id",
+                name: 'ParentCategoryId',
+                searchEnabled: true
+            });
+
+            $("#displayOrder").dxNumberBox({
+                value: 0,
+                min: 0,
+                showSpinButtons: true,
+                name: 'DisplayOrder',
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Enter sort number"]'
+                }]
+            });
+
+            $("#published").dxCheckBox({
+                value: true,
+                text: '@SharedLocalizer["Active"]',
+                name: 'Published',
+            });
+
+            $("#button").dxButton({
+                text: '@SharedLocalizer["Create"]',
+                type: "success",
+                useSubmitBehavior: true,
+            });
+            $("#summary").dxValidationSummary({});
+        });
+    </script>
+
+}

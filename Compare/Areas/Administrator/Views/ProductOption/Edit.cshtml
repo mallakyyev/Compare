@@ -1,0 +1,114 @@
+﻿@model Compare.BLL.DTOs.ProductOption.EditProductOptionDTO
+@using Compare.BLL.DTOs.Configuration
+@using Compare
+@using Compare.Utilits
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["Editing product option"];
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+
+    int lngIndex = 0;
+}
+
+<div class="py-4">
+    <div class="d-flex justify-content-between w-100 flex-wrap">
+        <div class="mb-3 mb-lg-0">
+            <h1 class="h4">@SharedLocalizer["Editing product option"]</h1>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card border-light shadow-sm components-section">
+            <div class="card-body">
+                <div id="gridContainer">
+                    <div class="row md-4">
+                        <form asp-area="Administrator" asp-controller="ProductOption" asp-action="Edit" method="post" id="form" enctype="multipart/form-data">
+                            <div class="col-lg-12 col-sm-12">
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                                <input type="hidden" asp-for="Id" />
+
+                                @foreach (LanguageDTO languageDTO in ViewBag.Languages)
+                                {
+                                    var brT = Model.ProductOptionTranslates.FirstOrDefault(p => p.LanguageCulture == languageDTO.Culture);
+                                    <input type="hidden" class="form-control" name="ProductOptionTranslates[@lngIndex].LanguageCulture" value="@languageDTO.Culture" />
+
+                                    <h3>@languageDTO.Name</h3>
+                                    <hr />
+                                    @if (brT != null)
+                                    {
+                                        <input type="hidden" name="ProductOptionTranslates[@lngIndex].Id" value="@brT.Id" />
+                                        <div class="mb-3">
+                                            <label>@SharedLocalizer["Name"]</label>
+                                            <div id="name-@lngIndex"></div>
+                                        </div>
+                                        <script>
+                                            $(function () {
+                                                $("#name-@lngIndex").dxTextBox({
+                                                    name: "ProductOptionTranslates[@lngIndex].Name",
+                                                    value: @Json.Serialize(brT.Name)
+                                                }).dxValidator({
+                                                    validationRules: [{
+                                                        type: "required",
+                                                        message: '@SharedLocalizer["Enter name"]'
+                                                    }]
+                                                }).dxTextBox("instance");
+                                            });
+                                        </script>
+                                    }
+                                    else
+                                    {
+                                        <div class="mb-3">
+                                            <label>@SharedLocalizer["Name"]</label>
+                                            <div id="name-@lngIndex"></div>
+                                        </div>
+                                        <script>
+                                            $(function () {
+                                                $("#name-@lngIndex").dxTextBox({
+                                                    name: "ProductOptionTranslates[@lngIndex].Name"
+                                                }).dxValidator({
+                                                    validationRules: [{
+                                                        type: "required",
+                                                        message: '@SharedLocalizer["Enter name"]'
+                                                    }]
+                                                }).dxTextBox("instance");
+                                            });
+                                        </script>
+                                    }
+
+                                    lngIndex++;
+                                }
+
+                                <br />
+                                <div id="summary"></div>
+                                <br />
+                                <div id="button"></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(function () {
+
+            $("#button").dxButton({
+                text: '@SharedLocalizer["Edit"]',
+                type: "success",
+                useSubmitBehavior: true,
+            });
+            $("#summary").dxValidationSummary({});
+
+        });
+
+    </script>
+
+}

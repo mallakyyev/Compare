@@ -1,0 +1,155 @@
+﻿@model CategoryPageViewModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["Catalog"];
+    ViewData["MetaDescription"] = SharedLocalizer["Goozle.com.tm catalog. The widest assortment in Turkmenistan."];
+}
+
+@*@{
+        ViewData["Title"] = SharedLocalizer["Catalog"];
+        ViewData["MetaDescription"] = "Каталог Goozle.com.tm. Самый широкий ассортимент в Туркменистане.";
+
+        void TmplateCategory(IEnumerable<Compare.BLL.DTOs.Catalog.CategoryDTO> data, int? parentId = null)
+        {
+            var items = data.Where(d => d.ParentCategoryId == parentId).OrderBy(i => i.DisplayOrder);
+            if (items.Any())
+            {
+                @foreach (var item in items)
+                {
+                    if (item.ParentCategoryId == null)
+                    {
+                        <div class="top-lins">
+                            <h3>
+                                @Html.ActionLink(item.Name, "ProductCategoryList", "Product", new { categoryId = item.Id })
+                            </h3>
+                        </div>
+                        {
+                            TmplateCategory(data, item.Id);
+                        }
+                    }
+                    else
+                    {
+                        <div class="column">
+                            <h6>
+                                @Html.ActionLink(item.Name, "ProductCategoryList", "Product", new { categoryId = item.Id })
+                            </h6>
+                            <ul>
+                                @{
+                                    liCategory(data, item.Id);
+                                }
+                            </ul>
+                        </div>
+                    }
+                }
+            }
+        }
+
+        void liCategory(IEnumerable<Compare.BLL.DTOs.Catalog.CategoryDTO> data, int? parentId = null)
+        {
+            var items = data.Where(d => d.ParentCategoryId == parentId).OrderBy(i => i.DisplayOrder);
+            if (items.Any())
+            {
+                @foreach (var item in items)
+                {
+                    <li>
+                        @Html.ActionLink(item.Name, "ProductCategoryList", "Product", new { categoryId = item.Id })
+                    </li>
+                }
+            }
+        }
+    }
+
+
+
+    <div class="mega-inside">
+        @{
+            TmplateCategory(Model);
+        }
+    </div>*@
+
+<section class="padding-bottom-20">
+    <div class="container">
+        @foreach (var categoryParent in Model.CategoryList)
+        {
+            if (categoryParent.Categories.Count() > 0)
+            {
+                <div class="row">
+                    <div class="col-md-12 padding-bottom-30">
+                        <h2>@categoryParent.Name</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 padding-bottom-30">
+                        <div class="filter-links">
+                            <!--  Categories -->
+                            @foreach (var childParent in categoryParent.Categories.Where(p => p.Published == true).OrderBy(o => o.DisplayOrder))
+                            {
+                                <h5 style="color: black;">@childParent.Name</h5>
+                                <ul>
+                                    @foreach (var child in childParent.Categories.Where(p => p.Published == true).OrderBy(o => o.DisplayOrder))
+                                    {
+                                        <li><a asp-area="" asp-controller="Product" asp-action="ProductCategoryList" asp-route-categoryId="@child.Id">@child.Name</a></li>
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Products -->
+                    <div class="col-md-9">
+                        @foreach (var categoryPanel in Model.CategoryPanelList)
+                        {
+                            <section class="padding-bottom-60">
+                                <!-- heading -->
+                                <div class="heading">
+                                    <h2>@categoryPanel.Name</h2>
+                                    <hr>
+                                </div>
+                                <!-- Items Slider -->
+                                <div class="item-slide-4 with-nav owl-carousel owl-theme owl-loaded">
+                                    <!-- Product -->
+                                    @foreach (var product in categoryPanel.Products.OrderBy(o => o.DisplayOrder))
+                                    {
+                                        <div class="product">
+                                            <article>
+                                                <a asp-area="" asp-controller="Product" asp-action="Detail" asp-route-productId="@product.Id">
+                                                    <img class="img-responsive" src="~/images/products/L/@product.Image" alt="">
+                                                </a>
+                                                <!-- Content -->
+                                                <a asp-area="" asp-controller="Product" asp-action="Detail" asp-route-productId="@product.Id" class="tittle" style="padding-top: 10px;">
+                                                    @product.ProductName
+                                                </a>
+                                                <br />
+                                                @if (product.MinPrice > 0)
+                                                {
+                                                    <div class="price" style="padding-top: 10px;">
+                                                        @SharedLocalizer["from"] @product.MinPrice TMT
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="product-notavailable">
+                                                        @SharedLocalizer["Not available"]
+                                                    </div>
+                                                }
+                                            </article>
+                                        </div>
+                                    }
+                                </div>
+                            </section>
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="order-success error-page">
+                    <h3>@SharedLocalizer["There is currently no category list"]</h3>
+                </div>
+            }
+        }
+    </div>
+</section>

@@ -1,0 +1,223 @@
+﻿@model Compare.BLL.DTOs.Organization.CreateOrganizationApiDTO
+@using Compare.BLL.DTOs.Configuration
+@using Compare
+@using Compare.Utilits
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["Creating a organization api"];
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<div class="py-4">
+    <div class="d-flex justify-content-between w-100 flex-wrap">
+        <div class="mb-3 mb-lg-0">
+            <h1 class="h4">@SharedLocalizer["Creating a organization api"]</h1>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card border-light shadow-sm components-section">
+            <div class="card-body">
+                <div id="gridContainer">
+                    <div class="row md-4">
+                        <form asp-area="Administrator" asp-controller="Organization" asp-action="CreateOrganizationApi" method="post" id="form" enctype="multipart/form-data">
+                            <div class="col-lg-12 col-sm-12">
+                                <div asp-validation-summary="All" class="text-danger"></div>
+
+                                <h2>@SharedLocalizer["Data"]</h2>
+                                <hr />
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Name"] *</label>
+                                    <div id="name"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Categories"] *</label>
+                                    <div id="CategoriesId"></div>
+                                    <div id="treeBox"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Organization"] *</label>
+                                    <div id="organizationSelection"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Url API"]</label>
+                                    <div id="urlApi"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <div id="published"></div>
+                                </div>
+
+                                <br />
+                                <div id="summary"></div>
+                                <br />
+                                <div id="button"></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(function () {
+            var treeView;
+
+            var syncTreeViewSelection = function(treeView, value){
+                if (!value) {
+                    treeView.unselectAll();
+                    return;
+                }
+
+                value.forEach(function(key){
+                    treeView.selectItem(key);
+                });
+
+                if (value !== undefined) {
+                    let catId = document.getElementById('CategoriesId');
+                    while (catId.hasChildNodes()) {
+                        catId.removeChild(catId.lastChild);
+                    }
+                    for (i = 0; i < value.length; i++) {
+                        var input = document.createElement("input");
+                        input.type = "hidden";
+                        input.name = "CategoriesId[" + i + "]";
+                        input.value = value[i];
+                        catId.appendChild(input);
+                    }
+                }
+            };
+
+            var getSelectedItemsKeys = function(items) {
+                var result = [];
+                items.forEach(function(item) {
+                    if(item.selected) {
+                        result.push(item.key);
+                    }
+                    if(item.items.length) {
+                        result = result.concat(getSelectedItemsKeys(item.items));
+                    }
+                });
+                return result;
+            };
+
+            $("#treeBox").dxDropDownBox({
+                value: "",
+                valueExpr: "id",
+                displayExpr: "name",
+                placeholder: '@SharedLocalizer["Select categories"]',
+                showClearButton: true,
+                dataSource: new DevExpress.data.DataSource({
+                    store: new DevExpress.data.AspNet.createStore({
+                        key: "id",
+                        loadUrl: `@API.GetAllCategories`,
+                        loadMode: "raw",
+                        onBeforeSend: function (method, ajaxOptions) {
+                            ajaxOptions.xhrFields = { withCredentials: true };
+                        }
+                    }),
+                    paginate: true,
+                    pageSize:30
+                }),
+                contentTemplate: function(e){
+                    var value = e.component.option("value"),
+                    $treeView = $("<div>").dxTreeView({
+                        dataSource: e.component.option("dataSource"),
+                        dataStructure: "plain",
+                        keyExpr: "id",
+                        parentIdExpr: "parentCategoryId",
+                        selectionMode: "multiple",
+                        displayExpr: "name",
+                        selectByClick: true,
+                        onContentReady: function(args){
+                            syncTreeViewSelection(args.component, value);
+                        },
+                        selectNodesRecursive: false,
+                        showCheckBoxesMode: "normal",
+                        onItemSelectionChanged: function(args){
+                            var nodes = args.component.getNodes();
+                            value = getSelectedItemsKeys(nodes);
+
+                            e.component.option("value", value);
+                        }
+                    });
+
+                    treeView = $treeView.dxTreeView("instance");
+
+                    e.component.on("valueChanged", function(args){
+                        var value = args.value;
+                        syncTreeViewSelection(treeView, value);
+                    });
+
+                    return $treeView;
+                }
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Select categories"]'
+                }]
+            });
+
+            $("#name").dxTextBox({
+                showClearButton: true,
+                name: 'Name',
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Enter name"]'
+                }]
+            }).dxTextBox("instance");
+
+            $("#organizationSelection").dxSelectBox({
+                dataSource: new DevExpress.data.DataSource({
+                    store: new DevExpress.data.AspNet.createStore({
+                        key: "id",
+                        loadUrl: `@API.GetAllOrganizations`,
+                        loadMode: "raw",
+                        onBeforeSend: function (method, ajaxOptions) {
+                            ajaxOptions.xhrFields = { withCredentials: true };
+                        }
+                    }),
+                    paginate: true,
+                    pageSize:30
+                }),
+                displayExpr: "name",
+                valueExpr: "id",
+                name: 'OrganizationId',
+                searchEnabled: true
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Choose organization"]'
+                }]
+            });
+
+            $("#urlApi").dxTextBox({
+                showClearButton: true,
+                name: 'UrlApi',
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Enter url api"]'
+                }]
+            }).dxTextBox("instance");
+
+            $("#button").dxButton({
+                text: '@SharedLocalizer["Create"]',
+                type: "success",
+                useSubmitBehavior: true,
+            });
+            $("#summary").dxValidationSummary({});
+
+        });
+
+    </script>
+
+}

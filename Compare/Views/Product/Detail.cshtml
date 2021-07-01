@@ -1,0 +1,276 @@
+﻿@model Compare.BLL.DTOs.Product.ProductDTO
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@{
+    ViewData["Title"] = Model.MetaTitle;
+    ViewData["MetaDescription"] = Model.MetaDescription;
+}
+
+<!-- Content -->
+<div id="content">
+
+    <!-- Products -->
+    <section class="padding-top-10 padding-bottom-60">
+        <div class="container">
+            <div class="row">
+                <!-- Products -->
+                <div class="col-md-12">
+                    @if (ViewBag.AlertMessage == "success")
+                    {
+                        <div class="alert alert-success alert-dismissible show">
+                            <button type="button" class="close" data-dismiss="alert">×</button>
+                            <strong>@SharedLocalizer["Success"]!</strong> @SharedLocalizer["Your product review will appear after being checked by the moderator"]
+                        </div>
+                    }
+                    else if (ViewBag.AlertMessage == "danger")
+                    {
+                        <div class="alert alert-danger alert-dismissible show">
+                            <button type="button" class="close" data-dismiss="alert">×</button>
+                            <strong>@SharedLocalizer["Error"]!</strong> @SharedLocalizer["Failed to add a review to the product"]
+                        </div>
+                    }
+                    @if (ViewBag.AlertMessage == "success_bookmark")
+                    {
+                        <div class="alert alert-success alert-dismissible show">
+                            <button type="button" class="close" data-dismiss="alert">×</button>
+                            <strong>@SharedLocalizer["Success"]!</strong> @SharedLocalizer["Product added to bookmark successfully"]
+                        </div>
+                    }
+                    else if (ViewBag.AlertMessage == "danger_bookmark")
+                    {
+                        <div class="alert alert-danger alert-dismissible show">
+                            <button type="button" class="close" data-dismiss="alert">×</button>
+                            <strong>@SharedLocalizer["Error"]!</strong> @SharedLocalizer["Failed to add product to bookmark"]
+                        </div>
+                    }
+                    else if (ViewBag.AlertMessage == "duplicate_bookmark")
+                    {
+                        <div class="alert alert-danger alert-dismissible show">
+                            <button type="button" class="close" data-dismiss="alert">×</button>
+                            <strong>@SharedLocalizer["Error"]!</strong> @SharedLocalizer["This product already exists in the bookmark"]
+                        </div>
+                    }
+
+                    <div class="product-detail">
+                        <div class="product">
+                            <h1 class="product-detail-title">@Model.ProductName</h1>
+                            <hr />
+                            <div class="row">
+                                <!-- Slider Thumb -->
+                                <div class="col-xs-5">
+                                    <article class="slider-item on-nav">
+                                        <div class="thumb-slider">
+                                            <ul class="slides">
+                                                <li data-thumb="../images/products/L/@Model.Image"> <img src="~/images/products/L/@Model.Image" alt=""> </li>
+                                                @foreach (var media in Model.ProductMedias)
+                                                {
+                                                    <li data-thumb="../images/products/L/@media.Image"> <img src="~/images/products/L/@media.Image" alt=""> </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </article>
+                                </div>
+                                <!-- Item Content -->
+                                <div class="col-xs-7">
+                                    <!-- List Details -->
+                                    <div class="product-detail-shortdescription">
+                                        @Model.ShortDescription
+                                    </div>
+                                    <div class="row">
+                                        @if (Model.MinPrice > 0)
+                                        {
+                                            <div class="col-sm-7"><span class="price">@Model.MinPrice TMT - @Model.MaxPrice TMT </span></div>
+                                        }
+                                        else
+                                        {
+                                            <div class="col-sm-7"><span class="price">@SharedLocalizer["Not available"] </span></div>
+                                        }
+                                    </div>
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                        <ul class="cmp-list">
+                                            @if (Model.InBookmark)
+                                            {
+                                                <li>
+                                                    <a style="color: blue;"><i class="fa fa-heart"></i> @SharedLocalizer["In bookmarks"]</a>
+                                                </li>
+                                            }
+                                            else
+                                            {
+                                                <form id="form-add-bookmark" asp-area="" asp-controller="Product" asp-action="AddBookmark" method="post">
+                                                    <input type="hidden" name="ProductId" value="@Model.Id" />
+                                                <li style="border-right: 0px solid #e5e5e5;">
+                                                    <a onClick="document.getElementById(`form-add-bookmark`).submit();" class="add-product-bookmark-link" style="cursor: pointer; "><i class="fa fa-heart"></i> @SharedLocalizer["Add to bookmarks"]</a>
+                                                </li>
+                                                </form>
+                                            }
+
+                                        </ul>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Details Tab Section-->
+                        <div class="item-tabs-sec">
+
+                            <!-- Nav tabs -->
+                            <ul class="nav" role="tablist">
+                                <li role="presentation" class="active"><a href="#stores" role="tab" data-toggle="tab">@SharedLocalizer["Stores"]</a></li>
+                                <li role="presentation"><a href="#haracteristics" role="tab" data-toggle="tab">@SharedLocalizer["Characteristics"]</a></li>
+                                <li role="presentation"><a href="#pro-detil" role="tab" data-toggle="tab">@SharedLocalizer["Description"]</a></li>
+                                <li role="presentation"><a href="#comments" role="tab" data-toggle="tab">@SharedLocalizer["Customer reviews"] (@Model.ProductComments.Count())</a></li>
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane fade in active" id="stores">
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center"></th>
+                                                    <th class="text-center">@SharedLocalizer["Store"]</th>
+                                                    <th class="text-center">@SharedLocalizer["In stock"]</th>
+                                                    <th class="text-center">@SharedLocalizer["Price"]</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var organization in Model.OrganizationProducts.OrderByDescending(o => o.InStock).ThenBy(t => t.Price))
+                                                {
+                                                    <tr>
+                                                        <td class="text-center">
+                                                            <a asp-area="" asp-controller="Store" asp-action="Detail" asp-route-storeId="@organization.Organization.Id">
+                                                                <img src="~/images/organizations/@organization.Organization.Logo" style="width: 100px;" />
+                                                            </a>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <a asp-area="" asp-controller="Store" asp-action="Detail" asp-route-storeId="@organization.Organization.Id">
+                                                                <span class="product-detail-store-title">
+                                                                    @organization.Organization.Name
+                                                                </span>
+                                                            </a>
+                                                            <br />
+                                                            <span class="product-detail-store-phone">
+                                                                @organization.Organization.Phone
+                                                            </span>
+                                                            @if (organization.OrganizationProductUrl != null)
+                                                            {
+                                                                <br />
+                                                                <a href="@organization.OrganizationProductUrl" target="_blank" class="product-store-link">@SharedLocalizer["Go to the seller's website"]</a>
+                                                            }
+
+                                                        </td>
+                                                        <td class="text-center">
+                                                            @if (organization.InStock)
+                                                            {
+                                                                <i class="fa fa-check"></i>
+                                                            }
+                                                            else
+                                                            {
+                                                                <i class="fa fa-close" style="color: red;"></i>
+                                                            }
+                                                        </td>
+                                                        <td class="text-center product-detail-store-price">
+                                                            @organization.Price TMT
+                                                            <br />
+                                                            @*@if (User.Identity.IsAuthenticated)
+                                                            {
+                                                                if (organization.InBookmarks)
+                                                                {
+                                                                    <label class="product-bookmark-fav">@SharedLocalizer["In bookmarks"]</label>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <form id="form-add-bookmark-@organization.Organization.Id" asp-area="" asp-controller="Product" asp-action="AddBookmark" method="post">
+                                                                        <input type="hidden" name="ProductId" value="@Model.Id" />
+                                                                        <input type="hidden" name="OrganizationId" value="@organization.Organization.Id" />
+                                                                        <label class="label-product-bookmark-link">
+                                                                            <a onClick="document.getElementById(`form-add-bookmark-@organization.Organization.Id`).submit();" class="add-product-bookmark-link" style="cursor: pointer;">@SharedLocalizer["To bookmarks"]</a>
+                                                                        </label>
+                                                                    </form>
+                                                                }
+                                                            }*@
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane fade in" id="haracteristics">
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <tbody>
+                                                @foreach (var atbte in Model.ProductDetailAttributeList)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @atbte.Name
+                                                        </td>
+                                                        <td>
+                                                            @atbte.Value
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane fade" id="pro-detil">
+                                    <!-- List Details -->
+                                    @Html.Raw(Model.FullDescription)
+                                </div>
+                                <div role="tabpanel" class="tab-pane fade" id="comments">
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                        <div class="add-comments padding-top-20">
+                                            <h6>@SharedLocalizer["Tell us in detail about your impressions"]</h6>
+                                            <!-- FORM -->
+                                            <form asp-area="" asp-controller="Product" asp-action="SendComment">
+                                                <input type="hidden" name="ProductId" value="@Model.Id" />
+                                                <ul class="row">
+                                                    <li class="col-sm-6">
+                                                        <label>
+                                                            @SharedLocalizer["Heading"]
+                                                            <input type="text" class="form-control" name="Name" placeholder="" required="@SharedLocalizer["Enter heading"]">
+                                                        </label>
+                                                    </li>
+                                                    <li class="col-sm-12">
+                                                        <label>
+                                                            @SharedLocalizer["Your feedback"]
+                                                            <textarea class="form-control" rows="3" placeholder="" name="Description" required="@SharedLocalizer["Enter your feedback"]"></textarea>
+                                                        </label>
+                                                    </li>
+                                                    <li class="col-sm-12 text-left">
+                                                        <button type="submit" class="btn-round">@SharedLocalizer["Send comment"]</button>
+                                                    </li>
+                                                </ul>
+                                            </form>
+                                        </div>
+                                        <hr />
+                                    }
+                                    <div class="comments">
+                                        <ul>
+                                            @foreach (var comment in Model.ProductComments)
+                                            {
+                                                <li class="media">
+                                                    <div class="media-body">
+                                                        <h6>@comment.Name <span><i class="fa fa-bookmark-o"></i> @comment.PublicateDate </span> </h6>
+                                                        <p>@comment.Description</p>
+                                                    </div>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<!-- End Content --> 

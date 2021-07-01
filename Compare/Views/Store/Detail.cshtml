@@ -1,0 +1,120 @@
+﻿@model Compare.BLL.DTOs.Organization.OrganizationDTO
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<!-- Content -->
+<div id="content">
+    <!-- Contact -->
+    <section class="contact-sec padding-top-40 padding-bottom-80">
+        <div class="container">
+            @if (ViewBag.AlertMessage == "success")
+            {
+                <div class="alert alert-success alert-dismissible show">
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                    <strong>@SharedLocalizer["Success"]!</strong> @SharedLocalizer["Your review about the store will appear after being checked by the moderator"]
+                </div>
+            }
+            else if (ViewBag.AlertMessage == "danger")
+            {
+                <div class="alert alert-danger alert-dismissible show">
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                    <strong>@SharedLocalizer["Error"]!</strong> @SharedLocalizer["Failed to add store review"]
+                </div>
+            }
+            <!-- Conatct -->
+            <div class="contact">
+                <div class="contact-form">
+                    <div class="row">
+                        <div class="col-md-8">
+
+                            <div class="heading">
+                                <h1>@Model.Name</h1>
+                            </div>
+                            <div class="blog-post">
+                                <article>
+                                    @Html.Raw(Model.Description)
+                                </article>
+                            </div>
+                            <div class="comments">
+                                <h5>@SharedLocalizer["Comments"] (@Model.StoreComments.Count())</h5>
+                                <hr />
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <div class="add-comments padding-top-20">
+                                        <h6>@SharedLocalizer["Tell us in detail about your impressions"]</h6>
+                                        <!-- FORM -->
+                                        <form asp-area="" asp-controller="Store" asp-action="SendComment">
+                                            <input type="hidden" name="OrganizationId" value="@Model.Id" />
+                                            <ul class="row">
+                                                <li class="col-sm-6">
+                                                    <label>
+                                                        @SharedLocalizer["Heading"]
+                                                        <input type="text" class="form-control" name="Name" placeholder="" required="@SharedLocalizer["Enter heading"]">
+                                                    </label>
+                                                </li>
+                                                <li class="col-sm-12">
+                                                    <label>
+                                                        @SharedLocalizer["Your feedback"]
+                                                        <textarea class="form-control" rows="3" placeholder="" name="Description" required="@SharedLocalizer["Enter your feedback"]"></textarea>
+                                                    </label>
+                                                </li>
+                                                <li class="col-sm-12 text-left">
+                                                    <button type="submit" class="btn-round">@SharedLocalizer["Send comment"]</button>
+                                                </li>
+                                            </ul>
+                                        </form>
+                                    </div>
+                                    <hr />
+                                }
+                                <ul>
+                                    @foreach (var comment in Model.StoreComments)
+                                    {
+                                        <li class="media">
+                                            <div class="media-body">
+                                                <h6>@comment.Name <span><i class="fa fa-bookmark-o"></i> @comment.PublicateDate </span> </h6>
+                                                <p>@comment.Description</p>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Conatct Infomation -->
+                        <div class="col-md-4">
+                            <div class="contact-info">
+                                <h5>@Model.Name</h5><br />
+                                <p>
+                                    <img src="~/images/organizations/@Model.Logo" style="width: 200px;" />
+                                </p>
+                                <hr>
+                                <h6> @SharedLocalizer["Address"]:</h6>
+                                <p>
+                                    @Model.Address
+                                </p>
+                                <h6>@SharedLocalizer["Phone"]:</h6>
+                                <p>
+                                    @Model.Phone
+                                </p>
+                                <h6>@SharedLocalizer["Email"]:</h6>
+                                <p>
+                                    @Model.Email
+                                </p>
+                                <h6>@SharedLocalizer["Site"]:</h6>
+                                <p>
+                                    <a href="//@Model.Site" target="_blank">@Model.Site</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<!-- End Content --> 

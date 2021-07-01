@@ -1,0 +1,80 @@
+﻿@page
+@model Compare.Areas.Identity.Pages.Account.Manage.Products.EditModel
+@using Compare.Utilits;
+@using Compare
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["Price change"];
+}
+
+<h4>@ViewData["Title"]</h4>
+<hr />
+<partial name="_StatusMessage" model="Model.StatusMessage" />
+<div class="row">
+    <div class="col-md-6">
+        <form id="profile-form" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Input.Id" />
+            <input type="hidden" asp-for="Input.ProductId" />
+            <input type="hidden" asp-for="Input.OrganizationId" />
+
+            <div class="form-group">
+                <label>@SharedLocalizer["Price"] *</label>
+                <div id="price"></div>
+            </div>
+            <div class="form-group">
+                <div id="inStock"></div>
+            </div>
+            <div class="form-group">
+                <div id="officialDealer"></div>
+            </div>
+
+            <br />
+            <div id="summary"></div>
+            <br />
+            <div id="button"></div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            $("#price").dxNumberBox({
+                format: "#,##0.00 TMT",
+                min: 1,
+                name: "Input.Price",
+                value: @Json.Serialize(Model.Input.Price)
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Enter price"]'
+                }]
+            });
+
+            let inStock = '@Model.Input.InStock';
+            $("#inStock").dxCheckBox({
+                text: '@SharedLocalizer["In stock"]',
+                name: 'Input.InStock',
+                value: (inStock.toLowerCase() == 'true')
+            });
+
+            let officialDealer = '@Model.Input.OfficialDealer';
+            $("#officialDealer").dxCheckBox({
+                text: '@SharedLocalizer["Official dealer"]',
+                name: 'Input.OfficialDealer',
+                value: (inStock.toLowerCase() == 'true')
+            });
+
+            $("#button").dxButton({
+                text: '@SharedLocalizer["Edit"]',
+                type: "default",
+                useSubmitBehavior: true,
+            });
+            $("#summary").dxValidationSummary({});
+        });
+    </script>
+
+}

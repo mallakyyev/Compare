@@ -1,0 +1,142 @@
+﻿@page
+@using Compare.Utilits;
+@using Compare
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["Product comments"];
+}
+
+<h4>@ViewData["Title"]</h4>
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <div class="card border-light shadow-sm components-section">
+            <div class="card-body">
+                <div id="gridContainer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            let url = `@API.GetAllProductCommentsByUser`;
+            let deleteComment = `@API.ProductCommentApi`;
+
+            $("#gridContainer").dxDataGrid({
+                dataSource: new DevExpress.data.DataSource({
+                    store: new DevExpress.data.AspNet.createStore({
+                        key: "id",
+                        loadUrl: url,
+                        insertUrl: '',
+                        updateUrl: '',
+                        deleteUrl: deleteComment,
+                        onBeforeSend: function (method, ajaxOptions) {
+                            ajaxOptions.xhrFields = { withCredentials: true };
+                        }
+                    }),
+                    paginate: true,
+                    pageSize: 100
+                }),
+                onInitNewRow: function(e) {
+                    var url = `./ProductComments/Create`
+                    window.location = url;
+                },
+                selection: {
+                    mode: "multiple"
+                },
+                "export": {
+                    enabled: true,
+                    fileName: "ProductComments",
+                    allowExportSelectedData: true
+                },
+                filterPanel: {
+                    visible: false
+                },
+                filterRow: { visible: false },
+                remoteOperations: true,
+                onRowUpdating: function (e) {
+                    e.newData = Object.assign(e.oldData, e.newData)
+                },
+                scrolling: {
+                    mode: "virtual",
+                    rowRenderingMode: "virtual"
+                },
+                paging: {
+                    pageSize: 100
+                },
+                editing: {
+                    useIcons: true,
+                    allowUpdating: true,
+                    allowDeleting: true,
+                    allowAdding: false
+                },
+                headerFilter: {
+                    visible: true
+                },
+                wordWrapEnabled: true,
+                showColumnLines: true,
+                showRowLines: true,
+                rowAlternationEnabled: true,
+                showBorders: true,
+                searchPanel: {
+                    visible: true
+                },
+                stateStoring: {
+                    enabled: true,
+                    type: "localStorage",
+                    storageKey: "productCommentsIdentity"
+                },
+                columns: [
+                    {
+                        caption: '@SharedLocalizer["Name"]',
+                        dataField: "name",
+                        allowHeaderFiltering: false
+                    },
+                    {
+                        caption: '@SharedLocalizer["Description"]',
+                        dataField: "description",
+                        allowHeaderFiltering: false,
+                    },
+                    {
+                        caption: '@SharedLocalizer["Publicate date"]',
+                        dataField: "publicateDate",
+                        dataType: "datetime",
+                        allowHeaderFiltering: false,
+                    },
+                    {
+                        caption: '@SharedLocalizer["Status"]',
+                        dataField: "isPublish",
+                        width: "130",
+                        allowHeaderFiltering: false
+                    },
+                   {
+                        type: "buttons",
+                        GetAllOrganizationProductsidth: 110,
+                        buttons: [
+                            {
+                                hint: '@SharedLocalizer["Edit"]',
+                                icon: "edit",
+                                visible: function (e) {
+                                    return (e.row.data.isPublish == false);
+                                },
+                                onClick: function (e) {
+                                    var idString = e.row.data.id;
+                                    var url = `@Url.Page("/Account/Manage/ProductComments/Edit", new { Area = "Identity" })`;
+                                    window.location = url + '?id=' + idString;
+                                }
+                            },
+                            "delete"
+                        ]
+                    }
+                ]
+            });
+
+        });
+    </script>
+}

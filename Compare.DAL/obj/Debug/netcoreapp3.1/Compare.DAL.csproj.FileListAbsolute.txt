@@ -1,0 +1,12 @@
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.DAL\bin\Debug\netcoreapp3.1\Compare.DAL.deps.json
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.DAL\bin\Debug\netcoreapp3.1\Compare.DAL.dll
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.DAL\bin\Debug\netcoreapp3.1\Compare.DAL.pdb
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.DAL\obj\Debug\netcoreapp3.1\Compare.DAL.csprojAssemblyReference.cache
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.DAL\obj\Debug\netcoreapp3.1\Compare.DAL.AssemblyInfoInputs.cache
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.DAL\obj\Debug\netcoreapp3.1\Compare.DAL.AssemblyInfo.cs
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.DAL\obj\Debug\netcoreapp3.1\Compare.DAL.csproj.CoreCompileInputs.cache
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.DAL\obj\Debug\netcoreapp3.1\Compare.DAL.dll
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.DAL\obj\Debug\netcoreapp3.1\Compare.DAL.pdb
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.DAL\bin\Debug\netcoreapp3.1\Compare.DAL.runtimeconfig.json
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.DAL\bin\Debug\netcoreapp3.1\Compare.DAL.runtimeconfig.dev.json
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.DAL\obj\Debug\netcoreapp3.1\Compare.DAL.genruntimeconfig.cache

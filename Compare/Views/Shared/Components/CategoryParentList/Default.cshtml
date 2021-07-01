@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Compare.BLL.DTOs.Catalog.CategoryDTO>
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+
+<div class="big-nsv bottom-box-shadow">
+    <div class="container">
+        <ul class="nav" role="tablist">
+            @foreach (var category in Model)
+            {
+                <li><a asp-area="" asp-controller="Catalog" asp-action="Index" asp-route-parentId="@category.Id"> @category.Name</a></li>
+            }
+        </ul>
+    </div>
+</div>
+
+@*<div class="cate-lst">
+        <a data-toggle="collapse" class="cate-style" href="#cater"><i class="fa fa-list-ul"></i> @SharedLocalizer["Categories"] </a>
+        <div class="cate-bar-in">
+            <div id="cater" class="collapse">
+                <ul>
+                    @foreach (var category in Model)
+                    {
+                        <li><a asp-area="" asp-controller="Product" asp-action="ProductCategoryList" asp-route-categoryId="@category.Id"> @category.Name</a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>*@

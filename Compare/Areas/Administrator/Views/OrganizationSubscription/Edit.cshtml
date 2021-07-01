@@ -1,0 +1,149 @@
+﻿@model Compare.BLL.DTOs.Organization.EditOrganizationSubscriptionDTO
+@using Compare.BLL.DTOs.Configuration;
+@using Compare
+@using Compare.Utilits
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["Editing subscription"];
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<div class="py-4">
+    <div class="d-flex justify-content-between w-100 flex-wrap">
+        <div class="mb-3 mb-lg-0">
+            <h1 class="h4">@SharedLocalizer["Creating subscription"]</h1>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card border-light shadow-sm components-section">
+            <div class="card-body">
+                <div id="gridContainer">
+                    <div class="row md-4">
+                        <form asp-area="Administrator" asp-controller="OrganizationSubscription" asp-action="Edit" method="post" id="form" enctype="multipart/form-data">
+                            <div class="col-lg-12 col-sm-12">
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                                <input type="hidden" asp-for="Id" />
+
+                                <h2>@SharedLocalizer["Data"]</h2>
+                                <hr />
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Category"]</label>
+                                    <div id="categoryId"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Organization"]</label>
+                                    <div id="organizationId"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Payment date"]</label>
+                                    <div id="paymentDate"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Expire At"]</label>
+                                    <div id="expireAt"></div>
+                                </div>
+
+                                <br />
+                                <div id="summary"></div>
+                                <br />
+                                <div id="button"></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            $("#categoryId").dxSelectBox({
+                dataSource: new DevExpress.data.DataSource({
+                    store: new DevExpress.data.AspNet.createStore({
+                        key: "id",
+                        loadUrl: `@API.GetAllCategories`,
+                        loadMode: "raw",
+                        onBeforeSend: function (method, ajaxOptions) {
+                            ajaxOptions.xhrFields = { withCredentials: true };
+                        }
+                    }),
+                    paginate: true,
+                    pageSize:30
+                }),
+                displayExpr: "name",
+                valueExpr: "id",
+                name: 'CategoryId',
+                searchEnabled: true,
+                value: @Json.Serialize(Model.CategoryId)
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Choose category"]'
+                }]
+            });
+
+            $("#organizationId").dxSelectBox({
+                dataSource: new DevExpress.data.DataSource({
+                    store: new DevExpress.data.AspNet.createStore({
+                        key: "id",
+                        loadUrl: `@API.GetAllOrganizations`,
+                        loadMode: "raw",
+                        onBeforeSend: function (method, ajaxOptions) {
+                            ajaxOptions.xhrFields = { withCredentials: true };
+                        }
+                    }),
+                    paginate: true,
+                    pageSize:30
+                }),
+                displayExpr: "name",
+                valueExpr: "id",
+                name: 'OrganizationId',
+                searchEnabled: true,
+                value: @Json.Serialize(Model.OrganizationId)
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Choose organization"]'
+                }]
+            });
+
+            $("#paymentDate").dxDateBox({
+                type: "date",
+                name: 'PaymentDate',
+                value: @Json.Serialize(Model.PaymentDate)
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Select payment date"]'
+                }]
+            });
+
+            $("#expireAt").dxDateBox({
+                type: "date",
+                name: 'ExpireAt',
+                value: @Json.Serialize(Model.ExpireAt)
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Select expire at"]'
+                }]
+            });
+
+
+            $("#button").dxButton({
+                text: '@SharedLocalizer["Edit"]',
+                type: "default",
+                useSubmitBehavior: true,
+            });
+            $("#summary").dxValidationSummary({});
+        });
+    </script>
+
+}

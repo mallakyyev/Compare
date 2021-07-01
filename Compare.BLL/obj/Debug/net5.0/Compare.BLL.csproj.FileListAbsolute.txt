@@ -1,0 +1,15 @@
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.BLL\bin\Debug\net5.0\Compare.BLL.deps.json
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.BLL\bin\Debug\net5.0\Compare.BLL.dll
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.BLL\bin\Debug\net5.0\ref\Compare.BLL.dll
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.BLL\bin\Debug\net5.0\Compare.BLL.pdb
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.BLL\bin\Debug\net5.0\Compare.DAL.dll
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.BLL\bin\Debug\net5.0\Compare.DAL.pdb
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.BLL\obj\Debug\net5.0\Compare.BLL.csprojAssemblyReference.cache
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.BLL\obj\Debug\net5.0\Compare.BLL.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.BLL\obj\Debug\net5.0\Compare.BLL.AssemblyInfoInputs.cache
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.BLL\obj\Debug\net5.0\Compare.BLL.AssemblyInfo.cs
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.BLL\obj\Debug\net5.0\Compare.BLL.csproj.CoreCompileInputs.cache
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.BLL\obj\Debug\net5.0\Compare.BLL.csproj.CopyComplete
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.BLL\obj\Debug\net5.0\Compare.BLL.dll
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.BLL\obj\Debug\net5.0\ref\Compare.BLL.dll
+C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare.BLL\obj\Debug\net5.0\Compare.BLL.pdb

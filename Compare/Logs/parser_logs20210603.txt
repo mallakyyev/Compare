@@ -1,0 +1,89 @@
+2021-06-03 17:57:12.501 +05:00 [INF] Entity Framework Core 5.0.2 initialized 'ApplicationDbContext' using provider 'Npgsql.EntityFrameworkCore.PostgreSQL' with options: QuerySplittingBehavior=SplitQuery 
+2021-06-03 17:57:13.559 +05:00 [INF] Executed DbCommand (21ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT EXISTS (SELECT 1 FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace WHERE c.relname='__EFMigrationsHistory');
+2021-06-03 17:57:13.693 +05:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT EXISTS (SELECT 1 FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace WHERE c.relname='__EFMigrationsHistory');
+2021-06-03 17:57:13.719 +05:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "MigrationId", "ProductVersion"
+FROM "__EFMigrationsHistory"
+ORDER BY "MigrationId";
+2021-06-03 17:57:13.747 +05:00 [INF] No migrations were applied. The database is already up to date.
+2021-06-03 17:57:13.982 +05:00 [INF] Executed DbCommand (8ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT EXISTS (
+    SELECT 1
+    FROM "AspNetRoles" AS a)
+2021-06-03 17:57:14.094 +05:00 [INF] Executed DbCommand (11ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT a."Id", a."ConcurrencyStamp", a."Name", a."NormalizedName"
+FROM "AspNetRoles" AS a
+WHERE a."Name" = 'Directory management'
+LIMIT 1
+2021-06-03 17:57:14.198 +05:00 [INF] User profile is available. Using 'C:\Users\allak\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2021-06-03 17:57:14.250 +05:00 [INF] Executed DbCommand (16ms) [Parameters=[@__normalizedUserName_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT a."Id", a."AccessFailedCount", a."ConcurrencyStamp", a."Discriminator", a."Email", a."EmailConfirmed", a."LockoutEnabled", a."LockoutEnd", a."NormalizedEmail", a."NormalizedUserName", a."PasswordHash", a."PhoneNumber", a."PhoneNumberConfirmed", a."SecurityStamp", a."TwoFactorEnabled", a."UserName", a."FirstName", a."FullName", a."LastName", a."OrganizationId"
+FROM "AspNetUsers" AS a
+WHERE (a."Discriminator" = 'ApplicationUser') AND (a."NormalizedUserName" = @__normalizedUserName_0)
+LIMIT 1
+2021-06-03 17:57:14.341 +05:00 [INF] Executed DbCommand (5ms) [Parameters=[@__normalizedUserName_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT a."Id", a."AccessFailedCount", a."ConcurrencyStamp", a."Discriminator", a."Email", a."EmailConfirmed", a."LockoutEnabled", a."LockoutEnd", a."NormalizedEmail", a."NormalizedUserName", a."PasswordHash", a."PhoneNumber", a."PhoneNumberConfirmed", a."SecurityStamp", a."TwoFactorEnabled", a."UserName", a."FirstName", a."FullName", a."LastName", a."OrganizationId"
+FROM "AspNetUsers" AS a
+WHERE (a."Discriminator" = 'ApplicationUser') AND (a."NormalizedUserName" = @__normalizedUserName_0)
+LIMIT 1
+2021-06-03 17:57:14.432 +05:00 [WRN] User validation failed: DuplicateUserName.
+2021-06-03 17:57:14.450 +05:00 [INF] Executed DbCommand (1ms) [Parameters=[@__normalizedRoleName_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT a."Id", a."ConcurrencyStamp", a."Name", a."NormalizedName"
+FROM "AspNetRoles" AS a
+WHERE a."NormalizedName" = @__normalizedRoleName_0
+LIMIT 2
+2021-06-03 17:57:14.484 +05:00 [INF] Executed DbCommand (4ms) [Parameters=[@__p_0='?', @__p_1='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT a."UserId", a."RoleId"
+FROM "AspNetUserRoles" AS a
+WHERE (a."UserId" = @__p_0) AND (a."RoleId" = @__p_1)
+LIMIT 1
+2021-06-03 17:57:14.494 +05:00 [INF] Executed DbCommand (1ms) [Parameters=[@__normalizedRoleName_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT a."Id", a."ConcurrencyStamp", a."Name", a."NormalizedName"
+FROM "AspNetRoles" AS a
+WHERE a."NormalizedName" = @__normalizedRoleName_0
+LIMIT 2
+2021-06-03 17:57:14.532 +05:00 [INF] Executed DbCommand (1ms) [Parameters=[@__normalizedUserName_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT a."Id", a."AccessFailedCount", a."ConcurrencyStamp", a."Discriminator", a."Email", a."EmailConfirmed", a."LockoutEnabled", a."LockoutEnd", a."NormalizedEmail", a."NormalizedUserName", a."PasswordHash", a."PhoneNumber", a."PhoneNumberConfirmed", a."SecurityStamp", a."TwoFactorEnabled", a."UserName", a."FirstName", a."FullName", a."LastName", a."OrganizationId"
+FROM "AspNetUsers" AS a
+WHERE (a."Discriminator" = 'ApplicationUser') AND (a."NormalizedUserName" = @__normalizedUserName_0)
+LIMIT 1
+2021-06-03 17:57:14.539 +05:00 [WRN] User validation failed: DuplicateUserName.
+2021-06-03 17:57:14.555 +05:00 [INF] Executed DbCommand (5ms) [Parameters=[@__lng_Culture_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT l."Culture", l."LanguageCode", l."Name", l."Published"
+FROM "Languages" AS l
+WHERE l."Culture" = @__lng_Culture_0
+LIMIT 2
+2021-06-03 17:57:14.567 +05:00 [INF] Executed DbCommand (1ms) [Parameters=[@__lng_Culture_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT l."Culture", l."LanguageCode", l."Name", l."Published"
+FROM "Languages" AS l
+WHERE l."Culture" = @__lng_Culture_0
+LIMIT 2
+2021-06-03 17:57:14.786 +05:00 [INF] Start installing Hangfire SQL objects...
+2021-06-03 17:57:18.383 +05:00 [INF] Hangfire SQL objects installed.
+2021-06-03 17:57:18.435 +05:00 [INF] Starting Hangfire Server using job storage: 'PostgreSQL Server: Host: localhost, DB: compare_db, Schema: hangfire'
+2021-06-03 17:57:18.438 +05:00 [INF] Using the following options for SQL Server job storage:
+2021-06-03 17:57:18.439 +05:00 [INF]     Queue poll interval: 00:00:15.
+2021-06-03 17:57:18.440 +05:00 [INF]     Invisibility timeout: 00:30:00.
+2021-06-03 17:57:18.442 +05:00 [INF] Using the following options for Hangfire Server:
+    Worker count: 20
+    Listening queues: 'default'
+    Shutdown timeout: 00:00:15
+    Schedule polling interval: 00:00:15
+2021-06-03 17:57:18.965 +05:00 [INF] Server desktop-7hdluv3:8560:9af378f9 successfully announced in 466,9398 ms
+2021-06-03 17:57:18.985 +05:00 [INF] Server desktop-7hdluv3:8560:9af378f9 is starting the registered dispatchers: ServerWatchdog, ServerJobCancellationWatcher, ExpirationManager, Worker, DelayedJobScheduler, RecurringJobScheduler...
+2021-06-03 17:57:19.017 +05:00 [INF] 1 servers were removed due to timeout
+2021-06-03 17:57:21.652 +05:00 [INF] Server desktop-7hdluv3:8560:9af378f9 all the dispatchers started
+2021-06-03 17:57:22.951 +05:00 [INF] Now listening on: https://localhost:5001
+2021-06-03 17:57:22.954 +05:00 [INF] Now listening on: http://localhost:5000
+2021-06-03 17:57:22.958 +05:00 [INF] Application started. Press Ctrl+C to shut down.
+2021-06-03 17:57:22.960 +05:00 [INF] Hosting environment: Development
+2021-06-03 17:57:22.970 +05:00 [INF] Content root path: C:\Users\allak\Source\Repos\Shamil-7\Compare\Compare\Compare
+2021-06-03 17:57:23.093 +05:00 [INF] Entity Framework Core 5.0.2 initialized 'ApplicationDbContext' using provider 'Npgsql.EntityFrameworkCore.PostgreSQL' with options: QuerySplittingBehavior=SplitQuery 
+2021-06-03 17:57:23.093 +05:00 [INF] Entity Framework Core 5.0.2 initialized 'ApplicationDbContext' using provider 'Npgsql.EntityFrameworkCore.PostgreSQL' with options: QuerySplittingBehavior=SplitQuery 
+2021-06-03 17:57:23.130 +05:00 [INF] Entity Framework Core 5.0.2 initialized 'ApplicationDbContext' using provider 'Npgsql.EntityFrameworkCore.PostgreSQL' with options: QuerySplittingBehavior=SplitQuery 
+2021-06-03 17:57:23.150 +05:00 [INF] Executed DbCommand (10ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."CountOffers", p."DisplayOrder", p."Image", p."ManufactureId", p."MaxPrice", p."MinPrice", p."ProductDetailAttributeId", p."Published"
+FROM "Products" AS p
+WHERE p."Published"

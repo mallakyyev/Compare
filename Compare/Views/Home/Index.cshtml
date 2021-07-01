@@ -1,0 +1,137 @@
+﻿@model HomeViewModel
+@using Compare.BLL.DTOs.Catalog
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@{
+    ViewData["Title"] = "Goozle.com.tm";
+    ViewData["MetaDescription"] = SharedLocalizer["Goozle is visited by hundreds of thousands of people to shop in the catalog!"];
+    var rand = new Random();
+    var top = Model.AdvertList.Where(p => p.AdvertPlaceStatus == Compare.DAL.Models.Enums.AdvertPlaceStatus.Top).OrderBy(o => rand.Next()).FirstOrDefault();
+    var sides = Model.AdvertList.Where(p => p.AdvertPlaceStatus == Compare.DAL.Models.Enums.AdvertPlaceStatus.Side).OrderBy(o => o.DisplayOrder);
+    var bottom = Model.AdvertList.Where(p => p.AdvertPlaceStatus == Compare.DAL.Models.Enums.AdvertPlaceStatus.Bottom).OrderBy(o => rand.Next()).FirstOrDefault();
+}
+
+<!-- Slid Sec -->
+<section class="slid-sec">
+    <!-- Main Slider Start -->
+    <div class="tp-banner-container">
+        <div class="tp-banner-full">
+            <ul>
+                @foreach (var banner in Model.BannerList)
+                {
+                    <li data-transition="random" data-slotamount="7" data-masterspeed="300" data-saveperformance="off">
+                        <!-- MAIN IMAGE -->
+                        <img src="~/images/banners/@banner.Image" alt="slider" data-bgposition="center bottom" data-bgfit="cover" data-bgrepeat="no-repeat" />
+
+                        @if (banner.Link != null)
+                        {
+                            <!-- LAYER NR. 4 -->
+                            <div class="tp-caption lfb tp-resizeme"
+                                 data-x="left" data-hoffset="400"
+                                 data-y="center" data-voffset="90"
+                                 data-speed="800"
+                                 data-start="1300"
+                                 data-easing="Power3.easeInOut"
+                                 data-elementdelay="0.1"
+                                 data-endelementdelay="0.1"
+                                 data-endspeed="300"
+                                 data-scrolloffset="0"
+                                 style="z-index: 10;"><a href="@banner.Link" target="_blank" class="btn-round big">@SharedLocalizer["View"]</a> </div>
+                            }
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- Wide Sale Banner -->
+@if (top != null)
+{
+    <section>
+        <div class="container">
+            <div class="top-bnr margin-bottom-40">
+                <img src="~/images/adverts/@top.Image" />
+            </div>
+        </div>
+    </section>
+}
+
+<section>
+    <div class="container">
+        <div class="row">
+            @*<div class="col-md-3">
+                @if (sides != null)
+                {
+                    foreach (var side in sides)
+                    {
+                        <div class="side-bnr">
+                            <img src="~/images/adverts/@side.Image" />
+                        </div>
+                    }
+                }
+            </div>*@
+
+            <div class="col-md-12">
+                @foreach (var panel in Model.PannelList)
+                {
+                    <section class="padding-bottom-60">
+                        <!-- heading -->
+                        <div class="heading">
+                            <h2>@panel.Name</h2>
+                            <hr>
+                        </div>
+                        <!-- Items Slider -->
+                        <div class="item-slide-4 with-nav owl-carousel owl-theme owl-loaded">
+                            <!-- Product -->
+                            @foreach (var product in panel.Products.OrderBy(o => o.DisplayOrder))
+                            {
+                                <div class="product">
+                                    <article>
+                                        <a asp-area="" asp-controller="Product" asp-action="Detail" asp-route-productId="@product.Id">
+                                            <img class="img-responsive" src="~/images/products/L/@product.Image" alt="">
+                                        </a>
+                                        <!-- Content -->
+                                        <a asp-area="" asp-controller="Product" asp-action="Detail" asp-route-productId="@product.Id" class="tittle" style="padding-top: 10px;">
+                                            @product.ProductName
+                                        </a>
+                                        <br />
+                                        @if (product.MinPrice > 0)
+                                        {
+                                            <div class="price" style="padding-top: 10px;">
+                                                @SharedLocalizer["from"] @product.MinPrice TMT
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="product-notavailable">
+                                                @SharedLocalizer["Not available"]
+                                            </div>
+                                        }
+                                    </article>
+                                </div>
+                            }
+                        </div>
+                    </section>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+@if (bottom != null)
+{
+    <section>
+        <div class="container">
+            <div class="bottom-bnr margin-bottom-40">
+                <img src="~/images/adverts/@bottom.Image" />
+            </div>
+        </div>
+    </section>
+}
+

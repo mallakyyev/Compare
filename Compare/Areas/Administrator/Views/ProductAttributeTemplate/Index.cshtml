@@ -1,0 +1,129 @@
+﻿@using Compare.Utilits;
+@using Compare
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["Attribute templates"];
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<div class="py-4">
+    <div class="d-flex justify-content-between w-100 flex-wrap">
+        <div class="mb-3 mb-lg-0">
+            <h1 class="h4">@SharedLocalizer["Attribute templates"]</h1>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card border-light shadow-sm components-section">
+            <div class="card-body">
+                <div id="gridContainer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            let url = `@API.GetAllProductAttributeTemplates`;
+            let rProdAT = `@API.RemoveProductAttributeTemplate`;
+            var returnUrl = '@Context.Request.Path@Context.Request.QueryString';
+
+            $("#gridContainer").dxDataGrid({
+                dataSource: new DevExpress.data.DataSource({
+                    store: new DevExpress.data.AspNet.createStore({
+                        key: "id",
+                        loadUrl: url,
+                        insertUrl: '',
+                        updateUrl: '',
+                        deleteUrl: rProdAT,
+                        onBeforeSend: function (method, ajaxOptions) {
+                            ajaxOptions.xhrFields = { withCredentials: true };
+                        }
+                    }),
+                    paginate: true,
+                    pageSize: 100
+                }),
+                onInitNewRow: function(e) {
+                    var url = `@Url.Action("Create", "ProductAttributeTemplate", new { Area = "Administrator" })`;
+                    window.location = url;
+                },
+                selection: {
+                    mode: "multiple"
+                },
+                "export": {
+                    enabled: true,
+                    fileName: "ProductAttributeTemplats",
+                    allowExportSelectedData: true
+                },
+                filterPanel: {
+                    visible: false
+                },
+                filterRow: { visible: false },
+                remoteOperations: true,
+                onRowUpdating: function (e) {
+                    e.newData = Object.assign(e.oldData, e.newData)
+                },
+                scrolling: {
+                    mode: "virtual",
+                    rowRenderingMode: "virtual"
+                },
+                paging: {
+                    pageSize: 100
+                },
+                editing: {
+                    useIcons: true,
+                    allowUpdating: true,
+                    allowDeleting: true,
+                    allowAdding: true
+                },
+                headerFilter: {
+                    visible: true
+                },
+                wordWrapEnabled: true,
+                showColumnLines: true,
+                showRowLines: true,
+                rowAlternationEnabled: true,
+                showBorders: true,
+                searchPanel: {
+                    visible: true
+                },
+                stateStoring: {
+                    enabled: true,
+                    type: "localStorage",
+                    storageKey: "productAttributeTemplatesAdmin"
+                },
+                columns: [
+                    {
+                        caption: '@SharedLocalizer["Name"]',
+                        dataField: "name",
+                        allowHeaderFiltering: false
+                    },
+                   {
+                        type: "buttons",
+                        width: 110,
+                        buttons: [
+                            {
+                                hint: '@SharedLocalizer["Edit"]',
+                                icon: "edit",
+                                onClick: function (e) {
+                                    var idString = e.row.data.id;
+                                    var url = `@Url.Action("Edit", "ProductAttributeTemplate", new { Area = "Administrator" })`;
+                                    window.location = url + '?id=' + idString;
+                                }
+                            },
+                            "delete"
+                        ]
+                    }
+                ]
+            });
+
+        });
+    </script>
+}

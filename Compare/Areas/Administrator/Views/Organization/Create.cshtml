@@ -1,0 +1,164 @@
+﻿@model Compare.BLL.DTOs.Organization.CreateOrganizationDTO
+@using Compare.BLL.DTOs.Configuration;
+@using Compare
+@using Compare.Utilits
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["Creating organization"];
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<div class="py-4">
+    <div class="d-flex justify-content-between w-100 flex-wrap">
+        <div class="mb-3 mb-lg-0">
+            <h1 class="h4">@SharedLocalizer["Creating organization"]</h1>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card border-light shadow-sm components-section">
+            <div class="card-body">
+                <div id="gridContainer">
+                    <div class="row md-4">
+                        <form asp-area="Administrator" asp-controller="Organization" asp-action="Create" method="post" id="form" enctype="multipart/form-data">
+                            <div class="col-lg-12 col-sm-12">
+                                <div asp-validation-summary="All" class="text-danger"></div>
+
+                                <h2>@SharedLocalizer["Data"]</h2>
+                                <hr />
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Name"]</label>
+                                    <div id="name"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Logo"]</label>
+                                    <div id="file"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Address"]</label>
+                                    <div id="address"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Phone"]</label>
+                                    <div id="phone"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Email"]</label>
+                                    <div id="email"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Site"]</label>
+                                    <div id="site"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label>@SharedLocalizer["Description"]</label>
+                                    <div id="description"></div>
+                                </div>
+
+                                <br />
+                                <div id="summary"></div>
+                                <br />
+                                <div id="button"></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            $("#name").dxTextBox({
+                vshowClearButton: true,
+                name: 'Name',
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: '@SharedLocalizer["Enter name"]'
+                }]
+            }).dxTextBox("instance");
+
+            $("#file").dxFileUploader({
+                selectButtonText: '@SharedLocalizer["Choose a picture"]',
+                name: "FormFile",
+                labelText: '@SharedLocalizer["or drag picture"]',
+                accept: "*",
+                uploadMode: "or drag",
+                multiple: false
+            });
+
+            $("#address").dxTextBox({
+                vshowClearButton: true,
+                name: 'Address',
+            }).dxTextBox("instance");
+
+            $("#phone").dxTextBox({
+                vshowClearButton: true,
+                name: 'Phone',
+            }).dxTextBox("instance");
+
+            $("#email").dxTextBox({
+                vshowClearButton: true,
+                dataField: "Email",
+                name: 'Email',
+            }).dxValidator({
+                validationRules: [{
+                    type: "email",
+                    message: '@SharedLocalizer["Email is invalid"]'
+                }]
+            }).dxTextBox("instance");
+
+            $("#site").dxTextBox({
+                vshowClearButton: true,
+                name: 'Site',
+            }).dxTextBox("instance");
+
+            $("#description").dxHtmlEditor({
+                height: 350,
+                toolbar: {
+                    items: [
+                        "undo", "redo", "separator",
+                        {
+                            formatName: "size",
+                            formatValues: ["8pt", "10pt", "12pt", "14pt", "18pt", "24pt", "36pt"]
+                        },
+                        {
+                            formatName: "font",
+                            formatValues: ["Arial", "Courier New", "Georgia", "Impact", "Lucida Console", "Tahoma", "Times New Roman", "Verdana"]
+                        },
+                        "separator", "bold", "italic", "strike", "underline", "separator",
+                        "alignLeft", "alignCenter", "alignRight", "alignJustify", "separator",
+                        "orderedList", "bulletList", "separator",
+                        {
+                            formatName: "header",
+                            formatValues: [false, 1, 2, 3, 4, 5]
+                        }, "separator",
+                        "color", "background", "separator",
+                        "link", "image", "separator",
+                        "clear", "codeBlock", "blockquote", "separator",
+                        "insertTable", "deleteTable",
+                        "insertRowAbove", "insertRowBelow", "deleteRow",
+                        "insertColumnLeft", "insertColumnRight", "deleteColumn"
+                    ]
+                },
+                name: `Description`,
+            }).dxHtmlEditor("instance");
+
+
+            $("#button").dxButton({
+                text: '@SharedLocalizer["Create"]',
+                type: "default",
+                useSubmitBehavior: true,
+            });
+            $("#summary").dxValidationSummary({});
+        });
+    </script>
+
+}

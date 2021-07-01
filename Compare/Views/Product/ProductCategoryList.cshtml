@@ -1,0 +1,203 @@
+﻿@model ProductViewModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@addTagHelper *, Compare
+
+@{
+    ViewData["Title"] = Model.FilterProductList.MetaTitle;
+    ViewData["MetaDescription"] = Model.FilterProductList.MetaDescription;
+    var brands = (int?[])Model.FilterProductList.Brands;
+    var attrbts = Model.FilterProductList.Attributes.SelectMany(s => s.Value);
+    int attributeIndex = 0;
+
+    var rand = new Random();
+    var top = Model.AdvertList.Where(p => p.AdvertPlaceStatus == Compare.DAL.Models.Enums.AdvertPlaceStatus.Top).OrderBy(o => rand.Next()).FirstOrDefault();
+    var sides = Model.AdvertList.Where(p => p.AdvertPlaceStatus == Compare.DAL.Models.Enums.AdvertPlaceStatus.Side).OrderBy(o => o.DisplayOrder);
+    var bottom = Model.AdvertList.Where(p => p.AdvertPlaceStatus == Compare.DAL.Models.Enums.AdvertPlaceStatus.Bottom).OrderBy(o => rand.Next()).FirstOrDefault();
+}
+
+<!-- Content -->
+<div id="content">
+    @if (top != null)
+    {
+        <section>
+            <div class="container">
+                <div class="top-bnr margin-bottom-10">
+                    <img src="~/images/adverts/@top.Image" />
+                </div>
+            </div>
+        </section>
+    }
+
+    <!-- Products -->
+    <section class="padding-top-10 padding-bottom-60">
+        <div class="container">
+            @if (Model.ProductDTOs.Count() > 0)
+            {
+                <div class="row">
+                    <!-- Shop Side Bar -->
+                    <div class="col-md-3">
+                        <div class="shop-side-bar margin-bottom-20">
+                            <form method="get">
+                                <input type="hidden" name="categoryId" value="@Model.FilterProductList.CategoryId" />
+                                <!-- Categories -->
+                                <h6>@SharedLocalizer["Manufactures"]</h6>
+                                <div class="checkbox checkbox-primary">
+                                    <ul>
+                                        @foreach (Compare.BLL.DTOs.Manufacture.ManufactureDTO manufacture in Model.FilterProductList.Manufactures)
+                                        {
+                                            var brand = brands.SingleOrDefault(s => s.Value == manufacture.Id);
+                                            <li>
+                                                @if (brand != null)
+                                                {
+                                                    <input id="mark-@manufacture.Id" value="@manufacture.Id" checked name="brands" class="styled" type="checkbox">
+                                                }
+                                                else
+                                                {
+                                                    <input id="mark-@manufacture.Id" value="@manufacture.Id" name="brands" class="styled" type="checkbox">
+                                                }
+                                                <label for="mark-@manufacture.Id"> @manufacture.Name </label>
+                                            </li>
+                                        }
+
+                                    </ul>
+                                </div>
+
+                                @foreach (var facet in Model.FilterProductList.FacetList)
+                                {
+                                    <h6>@facet.Name</h6>
+                                    <input value="f-@attributeIndex" name="attributes[@attributeIndex].Name" class="styled" type="hidden" />
+                                    <div class="checkbox checkbox-primary">
+                                        <ul>
+                                            @foreach (var atbt in facet.AttributeList.OrderBy(o => o.Value))
+                                            {
+                                                if (atbt.Value != "-")
+                                                {
+                                                    var attribute = attrbts.SingleOrDefault(s => s == atbt.Value);
+                                                    <li>
+                                                        @if (attribute != null)
+                                                        {
+                                                            <input id="attribute-@atbt.Id" value="@atbt.Value" name="attributes[@attributeIndex].Value" class="styled" type="checkbox" checked />
+                                                        }
+                                                        else
+                                                        {
+                                                            <input id="attribute-@atbt.Id" value="@atbt.Value" name="attributes[@attributeIndex].Value" class="styled" type="checkbox" />
+                                                        }
+                                                        <label for="attribute-@atbt.Id"> @atbt.Value</label>
+                                                    </li>
+                                                }
+
+                                            }
+                                        </ul>
+                                    </div>
+                                    {
+                                        attributeIndex++;
+                                    }
+                                }
+                                <input type="submit" value="@SharedLocalizer["Filter"]" class="btn-round" style="border: none;" />
+                            </form>
+                        </div>
+
+                        @if (sides != null)
+                        {
+                            foreach (var side in sides)
+                            {
+                                <div class="side-bnr">
+                                    <img src="~/images/adverts/@side.Image" />
+                                </div>
+                            }
+                        }
+                    </div>
+
+                    <!-- Products -->
+                    <div class="col-md-9">
+
+                        <!-- Short List -->
+                        <div class="short-lst">
+                            <h2>@Model.FilterProductList.CategoryName</h2>
+                        </div>
+
+                        <!-- Items -->
+                        <div class="col-list">
+                            <!-- Product -->
+                            @foreach (var product in Model.ProductDTOs)
+                            {
+                                <div class="product">
+                                    <article>
+                                        <!-- Product img -->
+                                        <div class="media-left">
+                                            <div class="item-img">
+                                                <a asp-area="" asp-controller="Product" asp-action="Detail" asp-route-productId="@product.Id">
+                                                    <img class="img-responsive" src="~/images/products/L/@product.Image" alt="">
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <!-- Content -->
+                                        <div class="media-body">
+                                            <div class="row">
+                                                <!-- Content Left -->
+                                                <div class="col-sm-7">
+                                                    <div class="product-title">
+                                                        <a asp-area="" asp-controller="Product" asp-action="Detail" asp-route-productId="@product.Id">@product.ProductName</a>
+                                                    </div>
+
+                                                    <div class="product-shortdescription">
+                                                        @product.ShortDescription
+                                                    </div>
+                                                </div>
+                                                <!-- Content Right -->
+                                                <div class="col-sm-5 text-center">
+                                                    <div class="position-center-center">
+                                                        @if (product.MinPrice > 0)
+                                                        {
+                                                            <div class="price">@SharedLocalizer["from"] @product.MinPrice TMT</div>
+                                                            <a asp-area="" asp-controller="Product" asp-action="Detail" asp-route-productId="@product.Id" class="btn-round">@product.CountOffers @((product.CountOffers > 1) ? SharedLocalizer["offers"] : SharedLocalizer["offer"]) </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="product-notavailable">
+                                                                @SharedLocalizer["Not available"]
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </article>
+                                </div>
+                            }
+
+                            <!-- pagination -->
+                            <page-link page-model="Model.PageViewModel" page-action="ProductCategoryList" page-url-categoryId="@Model.FilterProductList.CategoryId" page-url-brands="@Model.FilterProductList.Brands" page-url-attributes="@Model.FilterProductList.Attributes"></page-link>
+
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <section>
+                    <div class="container">
+                        <div class="order-success error-page">
+                            <h3>@SharedLocalizer["There are no products in this category."]</h3>
+                        </div>
+                    </div>
+                </section>
+            }
+        </div>
+    </section>
+
+    @if (bottom != null)
+    {
+        <section>
+            <div class="container">
+                <div class="bottom-bnr">
+                    <img src="~/images/adverts/@bottom.Image" />
+                </div>
+            </div>
+        </section>
+    }
+
+</div>
+<!-- End Content --> 
